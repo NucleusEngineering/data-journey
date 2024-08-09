@@ -135,6 +135,29 @@ resource "google_project_iam_member" "editor" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
+resource "google_project_iam_member" "artifact_reg" {
+  project = var.project_id
+  role = "roles/artifactregistry.admin"
+  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+}
+
+resource "google_project_iam_member" "artifact_reg_createonPush" {
+  project = var.project_id
+  role = "roles/artifactregistry.createOnPushWriter"
+  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+}
+
+resource "google_project_iam_member" "logwriter" {
+  project = var.project_id
+  role = "roles/logging.logWriter"
+  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+}
+
+resource "google_project_iam_member" "default_sa_storage_object_admin" {
+  project = var.project_id
+  role = "roles/storage.admin"
+  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+}
 # Data Simulation
 # 1. Create sample data source
 
