@@ -7,21 +7,32 @@
 
 # Cloud Native Data Journey on Google Cloud
 
-This walkthrough describes how to build an end-to-end data pipeline, from collection, over transformation and up to activation of the data.
+## End-to-End Data Pipeline for Mobile Game User Retention
 
-We will be using raw event data from a real mobile gaming app called Flood It, that originates from Google Analytics for Firebase.
+This walkthrough guides you through the process of constructing a complete data pipeline, encompassing:
 
-Events provide insight on what is happening in an app or on a website, such as user actions, system events, or errors.
+* **Data Collection:** Gathering raw event data from a real mobile gaming app (Flood It) via Google Analytics for Firebase.
+* **Data Transformation:** Processing and structuring the nested event data for analysis.
+* **Data Activation:** Utilizing the transformed data to build a machine learning model for predicting user retention.
 
-Every row in the dataset is an event, with various characteristics relevant to that event stored in a nested format within the row.
+### Data
 
-While Google Analytics logs many types of events already by default, developers can also customize the types of events they also wish to log.
+* **Source:** Google Analytics for Firebase
+* **Type:** Raw event data from the Flood It mobile game
+* **Structure:** Each row represents an event, with event characteristics stored in a nested format.
+* **Events:** 
+    * Predefined events automatically logged by Google Analytics.
+    * Custom events defined by developers for additional insights.
 
-User retention can be a major challenge for mobile game developers.
+### Goal
 
-The goal of this workshop is to develop an ML propensity model to determine the likelihood of users returning to your app.
+Develop a machine learning propensity model to predict the likelihood of users returning to the app, addressing the challenge of user retention in mobile game development. 
+
+### Architecture
 
 [Click here to see an image from the architecture we'll be about to use.](https://github.com/NucleusEngineering/data-journey/blob/main/rsc/architecture.png)
+
+### Aspiration
 
 By the end of this workshop, you will learn how to:
 
