@@ -103,7 +103,14 @@ terraform apply -var-file terraform.tfvars
 
 ## Validate Event Ingestion
 
-Open Cloud Shell Editor and enter your GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`. The endpoint URL refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. To find it, either find the service in the Cloud Run UI, or run the following gcloud command and copy the URL:
+### Update environment variables
+
+Open Cloud Shell Editor and enter your 
+* `GCP_PROJECT`, 
+* `GCP_REGION` and the 
+* `ENDPOINT_URL` in 
+
+`./config_env.sh`. The `ENDPOINT_URL` refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. To find it, either find the service in the Cloud Run UI, or run the following gcloud command and copy the URL:
 
 ```bash
 gcloud run services list
@@ -115,12 +122,13 @@ in the Cloud Shell Editor
 </walkthrough-editor-open-file>
 to read or edit it.
 
-Set all necessary environment variables by running:
+### Set environment variables
 
 ```bash
 source config_env.sh
 ```
 
+### Stream sample data
 You can now stream website interaction data points through a Cloud Run Proxy Service into your Pub/Sub Topic.
 
 The script `synth_json_stream.py` contains everything you need to simulate a stream. Run to direct an artificial click stream at your pipeline.
@@ -129,14 +137,17 @@ The script `synth_json_stream.py` contains everything you need to simulate a str
 python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
 ```
 
+### Validate solution
+
 After a minute or two validate that your solution is working by inspecting the [metrics](https://cloud.google.com/pubsub/docs/monitor-topic) of your Pub/Sub topic. Of course the topic does not have any consumers yet. Thus, you should find that messages are queuing up.
 
 By default you should see around .5 messages per second streaming into the topic.
 
 ## Bring raw data to BigQuery
 
-Now that your data ingestion is working correctly we move on to set up your processing infrastructure. Data processing infrastructures often have vastly diverse technical and business requirements. We will find the right setup for three completely different settings.
+Now that your data ingestion is working correctly, we move on to **set up your processing infrastructure**. Data processing infrastructures often have vastly diverse technical and business requirements. We will find the right setup for three completely different settings.
 
+### ELT
 [ELT is in!](https://cloud.google.com/bigquery/docs/migration/pipelines#elt) Imagine you don't actually want to set up processing. Instead, you would like to build [a modern Lakehouse structure](https://cloud.google.com/blog/products/data-analytics/open-data-lakehouse-on-google-cloud) with ELT processing. Therefore, your main concern at this point is to bring the incoming raw data into your Data Warehouse as cost-efficient as possible. Data users will worry about the processing.
 
 To start out we aim for rapid iteration. We plan using BigQuery as Data Lakehouse - Combining Data Warehouse and Data Lake.
@@ -147,24 +158,26 @@ To implement our lean ELT pipeline we need:
 * BigQuery Table
 * Pub/Sub BigQuery Subscription
 
-Start with creating a BigQuery Dataset named `data_journey`. The Dataset should contain a table named `pubsub_direct`.
+Start with **creating a BigQuery Dataset** named `data_journey`. The Dataset should contain **a table** named `pubsub_direct`.
 
-Continue by setting up a Pub/Sub Subscription named `dj_subscription_bq_direct` that directly streams incoming messages in the BigQuery Table you created.
+Continue by **setting up a Pub/Sub Subscription** named `dj_subscription_bq_direct` that directly streams incoming messages in the BigQuery Table you created.
 
-To create the BigQuery Dataset run:
+#### How?
+
+To create the **BigQuery Dataset** run:
 
 ```bash
 bq --location=$GCP_REGION mk --dataset $GCP_PROJECT:data_journey
 ```
 
-To create the BigQuery destination table run:
+To create the **BigQuery destination table** run:
 
 ```bash
 bq mk --location=$GCP_REGION --table $GCP_PROJECT:data_journey.pubsub_direct data:STRING
 ```
 Alternatively create the [Dataset](https://cloud.google.com/bigquery/docs/datasets#create-dataset) and [Table](https://cloud.google.com/bigquery/docs/tables#create_an_empty_table_with_a_schema_definition) via Cloud Console as indicated in the documentation.
 
-To create the Pub/Sub subscription in the console run:
+To create the **Pub/Sub subscription** in the console run:
 
 ```bash
 gcloud pubsub subscriptions create dj_subscription_bq_direct --topic=dj-pubsub-topic --bigquery-table=$GCP_PROJECT:data_journey.pubsub_direct
@@ -175,26 +188,30 @@ gcloud pubsub subscriptions create dj_subscription_bq_direct --topic=dj-pubsub-t
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription all the way up to your BigQuery destination table.
 
 Run:
-
 ```bash
 python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
 ```
 
 to direct an artificial click stream at your pipeline. If your datastream is still running from earlier you don't need to initiate it again.
 
-After a minute or two you should find your BigQuery destination table populated with data points. The metrics of Pub/Sub topic and Subscription should also show the throughput. Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
+After a minute or two you should 
+* **find your BigQuery destination table populated with data points**;
+* find that the **metrics of Pub/Sub topic and Subscription also show the throughput**. 
+Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
 
 ## Part 2: ETL(Extract Transform Load) - Cloud Run
 
-ELT is a relatively new concept. Cheap availability of Data Warehouses allows efficient on-demand transformations. That saves storage and increases flexibility. All you have to manage are queries, not transformed datasets. And you can always go back to data in it's raw form.
+**ELT is a relatively new concept**. Cheap availability of Data Warehouses allows efficient on-demand transformations. That saves storage and increases flexibility. All you have to manage are queries, not transformed datasets. And you can always go back to data in it's raw form.
 
-Although, sometimes it just makes sense to apply transformation on incoming data directly. What if we need to apply some general cleaning, or would like to apply machine learning inference on the incoming data at the soonest point possible?
+Although, sometimes it just makes sense to apply transformation on incoming data directly. 
+
+**What if we need to apply some general cleaning, or would like to apply machine learning inference on the incoming data at the soonest point possible?**
 
 Traditional [ETL](https://cloud.google.com/bigquery/docs/migration/pipelines#etl) is a proven concept to do just that.
 
-But ETL tools are maintenance overhead. In our example, you don't want to manage a Spark, GKE cluster or similar.Specifically, your requirement is a serverless and elastic ETL pipeline.
+But ETL tools are maintenance overhead. **In our example**, you don't want to manage a Spark, GKE cluster or similar. Specifically, **your requirement is a serverless and elastic ETL pipeline.**
 
-That means your pipeline should scale down to 0 when unused or up to whatever is needed to cope with a higher load.
+That means **your pipeline should scale down to 0 when unused** or **up to whatever is needed** to cope with a higher load.
 
 To start off, let's reference the working directory:
 
@@ -202,36 +219,36 @@ To start off, let's reference the working directory:
 cd ETL/CloudRun
 ```
 
-## ETL Step 1
+## ETL | Step 1 | Destination
 
-First component of our lightweight ETL pipeline is a BigQuery Table named `cloud_run`. The BigQuery Table should make use of the schema file `./schema.json`. The processing service will stream the transformed data into this table.
+First component of our lightweight ETL pipeline is a **BigQuery Table** named `cloud_run`. 
+* The BigQuery Table should **make use of the schema file** `./schema.json`. 
+* The processing service will stream the transformed data into this table.
 
 Run this command:
 
 ```bash
-bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud run ./schema.json
+bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud_run ./schema.json
 ```
 
 OR follow the documentation on how to [create a BigQuery table with schema through the console](https://cloud.google.com/bigquery/docs/tables#console).
 
-## ETL Step 2
+## ETL | Step 2 | Create Processing Service
 
-Second, let's set up your Cloud Run Processing Service. `./ETL/Cloud Run` contains all the necessary files.
+Second, let's set up your **Cloud Run Processing Service**. 
+* `./ETL/Cloud Run` contains all the necessary files.
+* Inspect the `Dockerfile` to understand how the container will be build.
+* `main.py` defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic.
 
-Inspect the `Dockerfile` to understand how the container will be build.
+Make sure to **replace the required variables** in `config.py` so you can access them safely in `main.py`.
 
-`main.py` defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic.
-
-Make sure to replace the required variables in `config.py` so you can access them safely in `main.py`.
-
-Once the code is completed build the container from `./ETL/Cloud Run` into a new [Container Repository](https://cloud.google.com/artifact-registry/docs/overview) named `data-processing-service`.
+Once the code is completed **build the container from** `./ETL/Cloud Run` into a new [Container Repository](https://cloud.google.com/artifact-registry/docs/overview) named `data-processing-service`.
 
 ```bash
 gcloud builds submit $RUN_PROCESSING_DIR --tag gcr.io/$GCP_PROJECT/data-processing-service
 ```
 
-Validate the successful build with:
-
+**Validate** the successful build with:
 ```bash
 gcloud container images list
 ```
@@ -244,17 +261,17 @@ NAME: gcr.io/<project-id>/data-processing-service
 Only listing images in gcr.io/<project-id>. Use --repository to list images in other repositories.
 ```
 
-## ETL Step 3
+## ETL | Step 3 | Deploy Processing Service 
 
-Next step is to deploy a new cloud run processing service based on the container you just build to your Container Registry.
+Next step is to **deploy a new Cloud Run processing service** based on the container you've just built, and added to your Container Registry.
 
 ```bash
 gcloud run deploy dj-run-service-data-processing --image gcr.io/$GCP_PROJECT/data-processing-service:latest --region=europe-west1 --allow-unauthenticated
 ```
 
-## ETL Step 4
+## ETL | Step 4 | Set Up Messaging
 
-Define a Pub/Sub subscription named `dj-subscription_cloud_run` that can forward incoming messages to an endpoint.
+Define a **Pub/Sub subscription** named `dj-subscription_cloud_run` that can forward incoming messages to an endpoint.
 
 You will need to create a Push Subscription to the Pub/Sub topic we already defined.
 
