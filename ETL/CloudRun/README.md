@@ -99,7 +99,7 @@ read it can be [defined via the console](https://cloud.google.com/pubsub/docs/cr
 
 </details>
 
-
+## Check schema again. [add weekday time - string, not date time, nullable]
 ## Validate lightweight ETL pipeline implementation
 
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription, Cloud Run Processing and all the way up to your BigQuery destination table.
