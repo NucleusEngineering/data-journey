@@ -104,6 +104,8 @@ read it can be [defined via the console](https://cloud.google.com/pubsub/docs/cr
 
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription, Cloud Run Processing and all the way up to your BigQuery destination table.
 
+Just before you sunt the script, edit schema and add "weekday" of type string, not date time, nullable.
+
 Run 
 
 ```
