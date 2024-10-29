@@ -158,6 +158,8 @@ Before finishing this section make sure to update the project_id and region in `
 
 To create a flex-template we first need to build the pipeline code as container in the Container Registry.
 
+Note: Add data-journey-pipeline@datajourney[..]serviceaccount.com for artifact reader to avoid following error: "denied: Permission "artifactregistry.repositories.downloadArtifacts" denied on resource"
+
 Build the Dataflow folder content as container named `beam-processing-flex-template` to your Container Registry.
 
 <details><summary>Suggested Solution</summary>
