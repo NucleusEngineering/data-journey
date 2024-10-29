@@ -272,7 +272,8 @@ You can now stream website interaction data points through your Cloud Run Proxy 
 Run:
 
 ```bash
-python3 ./datalayer/synth_data_stream.py --endpoint=$ENDPOINT_URL
+python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
+#python3 ./datalayer/synth_data_stream.py --endpoint=$ENDPOINT_URL - old version
 ```
 to direct an artificial click stream at your pipeline. No need to reinitialize if you still have the clickstream running from earlier.
 
