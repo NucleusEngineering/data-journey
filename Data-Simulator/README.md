@@ -8,7 +8,7 @@ git clone https://github.com/NucleusEngineering/data-journey
 cd data-journey/Data-Simulator
 ```
 
-Enable Google Cloud APIs.
+Enable Google Cloud APIs. (also create gcr.io repo before tf script)
 ```
 gcloud services enable compute.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com dataflow.googleapis.com run.googleapis.com dataflow.googleapis.com pubsub.googleapis.com serviceusage.googleapis.com bigquery.googleapis.com containerregistry.googleapis.com
 ```
