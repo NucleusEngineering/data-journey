@@ -30,6 +30,8 @@ bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud_run ./sche
 
 OR follow the documentation on how to [create a BigQuery table with schema through the console](https://cloud.google.com/bigquery/docs/tables#console).
 
+!!! Note: Check BQ schema for "weekday" column. Create it if needed.
+
 </details>
 
 ## STEP 2
