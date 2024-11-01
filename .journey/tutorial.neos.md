@@ -442,6 +442,8 @@ Create a Cloud Storage Bucket named `gs://<project-id>-gaming-events`. Create a 
 
 Here is the solution for the previous page.
 
+Note: Add data-journey-pipeline@datajourney[..]serviceaccount.com for artifact reader to avoid following error: "denied: Permission "artifactregistry.repositories.downloadArtifacts" denied on resource"
+
 **Dataflow folder content to Container Registry**
 
 ```bash
