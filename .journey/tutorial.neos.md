@@ -212,7 +212,7 @@ First component of our lightweight ETL pipeline is a BigQuery Table named `cloud
 Run this command:
 
 ```bash
-bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud run ./schema.json
+bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud_run ./schema.json
 ```
 
 OR follow the documentation on how to [create a BigQuery table with schema through the console](https://cloud.google.com/bigquery/docs/tables#console).
