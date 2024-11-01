@@ -73,6 +73,10 @@ Clone the github repo we'll be using in this walkthrough.
 git clone https://github.com/NucleusEngineering/data-journey
 cd data-journey/Data-Simulator
 ``` 
+Enable Google Cloud APIs. (also create gcr.io repo before tf script) + create gcr.io Artifact repo.
+```
+gcloud services enable compute.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com dataflow.googleapis.com run.googleapis.com dataflow.googleapis.com pubsub.googleapis.com serviceusage.googleapis.com bigquery.googleapis.com containerregistry.googleapis.com
+```
 
 <walkthrough-info-message>Open Cloud Shell Editor and change the project id in `./terraform.tfvars` to your own project id.</walkthrough-info-message>
 ```bash
