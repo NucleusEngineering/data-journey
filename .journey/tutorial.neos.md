@@ -203,6 +203,8 @@ bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud run ./sche
 
 OR follow the documentation on how to [create a BigQuery table with schema through the console](https://cloud.google.com/bigquery/docs/tables#console).
 
+!!! Note: Check BQ schema for "weekday" column. Create it if needed.
+
 ## ETL Step 2
 
 Second, let's set up your Cloud Run Processing Service. `./ETL/Cloud Run` contains all the necessary files.
