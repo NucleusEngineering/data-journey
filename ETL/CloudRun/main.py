@@ -47,7 +47,7 @@ def index():
 
     record = base64.b64decode(ps_message["data"]).decode("utf-8").strip()
     record = json.loads(record)
-
+    #adds a new field called "weekday" to the record dictionary
     record["weekday"] = datetime.datetime.strptime(record["event_date"], "%Y%m%d").strftime('%A')
 
     rows_to_insert = [record]
