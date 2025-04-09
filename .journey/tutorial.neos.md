@@ -2,7 +2,7 @@
   <meta name="title" content="Welcome to Cloud Native Data Journey with Google Cloud!" />
   <meta name="description" content="This walkthrough describes how to build an end-to-end data pipeline, from collection, over transformation and up to activation of the data." />
   <meta name="keywords" content="data,bigquery,dataflow,cloudrun,etl,elt" />
-  <meta name="component_id" content="1163696" /> #
+  <meta name="component_id" content="1163696" />
 </walkthrough-metadata>
 
 # Cloud Native Data Journey on Google Cloud
@@ -31,96 +31,155 @@ By the end of this workshop, you will learn how to:
 * Synchronize the data in MySQL and BigQuery **(/CDC)**
 * Train ML model Using BigQueryML and automate your ML workflow using Vertex ML Pipelines **(/ML)**
 
-## Project setup
 
-Before starting on our data journey, we need to select or create a Google Cloud Project.
 
-GCP organizes resources into projects. This allows you to
-collect all of the related resources for a single application in one place.
+## Working with labs
 
-Begin by creating a new project or selecting an existing project for this
-tutorial.
 
-For details, see
-[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-### Turn on Google Cloud APIs
+You can insert commands into the terminal using the following button on top of each code line in the tutorial:
+<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>. The button will automatically open the terminal.
+Please make sure you are using the terminal of the IDE.
 
-Enable the following Google Cloud APIs:
+Let's try:
+
+```bash
+echo "I'm ready to get started."
+```
+
+Execute by pressing the return key in the terminal that has been opened in the lower part of your screen.
+Now let's setup project ID:
+```bash
+cd ~
+gcloud config set project [PROJECT_ID]
+```
+You can find the Project ID in Cloud Console, if you click on the project name.
+
+### Enable services
+
+First, we need to enable some Google Cloud Platform (GCP) services. Enabling GCP services is necessary to access and use the resources and capabilities associated with those services. Each GCP service provides a specific set of features for managing cloud infrastructure, data, AI models, and more. Enabling them takes a few minutes.
 
 <walkthrough-enable-apis apis=
-  "compute.googleapis.com,
-  cloudbuild.googleapis.com, artifactregistry.googleapis.com, 
-  dataflow.googleapis.com, run.googleapis.com, pubsub.googleapis.com, serviceusage.googleapis.com, bigquery.googleapis.com, containerregistry.googleapis.com">
+  "storage-component.googleapis.com,
+  run.googleapis.com,
+  dataflow.googleapis.com,
+  notebooks.googleapis.com,
+  serviceusage.googleapis.com,
+  cloudresourcemanager.googleapis.com,
+  pubsub.googleapis.com,
+  compute.googleapis.com,
+  metastore.googleapis.com,
+  datacatalog.googleapis.com,
+  bigquery.googleapis.com,
+  dataplex.googleapis.com,
+  datalineage.googleapis.com,
+  dataform.googleapis.com,
+  dataproc.googleapis.com,
+  bigqueryconnection.googleapis.com,
+  aiplatform.googleapis.com,
+  cloudbuild.googleapis.com,
+  cloudaicompanion.googleapis.com,
+  artifactregistry.googleapis.com">
 </walkthrough-enable-apis>
+
+Internal: check Organizational Policies for Argolis envirnoments.
+<!-- ### Organizational Policies
+
+Depending on the setup within your organization you might have to [overwrite some organizational policies](https://cloud.google.com/resource-manager/docs/organization-policy/creating-managing-policies#boolean_constraints) for the examples to run.
+
+For example, the following policies should not be enforced. 
+
+```
+constraints/sql.restrictAuthorizedNetworks
+constraints/compute.vmExternalIpAccess
+constraints/compute.requireShieldedVm
+constraints/storage.uniformBucketLevelAccess
+constraints/iam.allowedPolicyMemberDomains
+``` -->
 
 To get started, click **Start**
 
-## Part 1: Data-Simulator
 
-<walkthrough-tutorial-duration duration="60"></walkthrough-tutorial-duration>
-<walkthrough-tutorial-difficulty difficulty="3"></walkthrough-tutorial-difficulty>
 
-Let's build the first step in the Data Journey by setting up a messaging stream for our data.
 
-### Environment Preparation
+ ##  Lab 1: Environment Setup
 
-We have to make sure your GCP project is prepared by:
 
-Clone the github repo we'll be using in this walkthrough.
+
+
+
+<walkthrough-tutorial-duration duration="20"></walkthrough-tutorial-duration>
+<walkthrough-tutorial-difficulty difficulty="2"></walkthrough-tutorial-difficulty>
+
+Let's build the first step in the Data Journey.
+In this lab we will set up your environment and set up a messaging stream for our data.
+
+We have to make sure your GCP project is prepared.
+Clone the github repo we'll be using in this walkthrough:
 
 ```bash
-git clone https://github.com/NucleusEngineering/data-journey
+cd ~
+git clone https://github.com/ccpintoiu/data-journey
 cd data-journey/Data-Simulator
-``` 
-Enable Google Cloud APIs. (also create gcr.io repo before tf script) + create gcr.io Artifact repo.
 ```
-gcloud services enable compute.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com dataflow.googleapis.com run.googleapis.com dataflow.googleapis.com pubsub.googleapis.com serviceusage.googleapis.com bigquery.googleapis.com containerregistry.googleapis.com
-```
-* Note: On Argolis envs, Override organization policy for:
 
-iam.allowedPolicyMemberDomains
-constraints/compute.vmExternalIpAccess
-storage.uniformBucketLevelAccess
-constraints/sql.restrictAuthorizedNetworks
-constraints/storage.uniformBucketLevelAccess
+We will be using Terraform to provision infrastructure and resources, setup Network, Service Account and Permissions. 
+In addition, we will extracts a sample dataset from a public BigQuery table, build and deploy a sample app and create a Pub/Sub topic.
 
-* Note: If you are running into access problems with dataflow job, add Service Account user role to your user account.
+Want to know what exactly the Terraform configuration file does?
+
+Let's ask Gemini:
+
+1. Open  <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/main.tf">`main.tf`</walkthrough-editor-open-file>.
+2. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
+3. Insert ``What main.tf file do?`` into the Gemini prompt.
 
 
-<walkthrough-info-message>Open Cloud Shell Editor and change the project id in `./terraform.tfvars` to your own project id.</walkthrough-info-message>
-```bash
-nano terraform.tfvars
-```
-Change the ID and click `ctrl+S` and `ctrl+X` to save and return to the shell.
+First, we need to change the terraform variable file. You can open files directly from this tutorial:
+Open `terraform.tfvars` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/terraform.tfvars">by clicking here</walkthrough-editor-open-file> and add your own project id.
+
+❗ Please do not include any whitespaces when setting these variablers.
 
 Build the basic permissions & networking setup via terraform apply.
 
 ```bash
 terraform init -upgrade
 ```
+```bash
+gcloud config set project [PROJECT_ID]
+```
+
+Just before, we will need to manually create Artifact Registry multi region named: gcr.io (go to Artifact Registrry and create new Repo, of type Docker, multi-region.
 
 ```bash
 terraform apply -var-file terraform.tfvars
 ```
 
-## Validate Event Ingestion
+ ### Validate Event Ingestion
 
-Open Cloud Shell Editor and enter your GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`. The endpoint URL refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. To find it, either find the service in the Cloud Run UI, or run the following gcloud command and copy the URL:
+After a few minutes, we should have the proxy container up and running. We can check and copy the endpoint URL by running:
 
 ```bash
-gcloud run services list
+gcloud run services list 
 ```
 
-After, enter the variables in the config file. You can open it
-<walkthrough-editor-open-file filePath="config_env.sh">
-in the Cloud Shell Editor
-</walkthrough-editor-open-file>
-to read or edit it.
+The endpoint URL refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. 
+
+We need to add GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`<walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file>.
+
+
+First, enter the variables in the config file. You can open it <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">
+in the Cloud Shell Editor </walkthrough-editor-open-file> to read or edit it.
 
 Set all necessary environment variables by running:
 
 ```bash
+source config_env.sh
+```
+### ❗ In case you accidentally close the tutorial or the editor, or the session expires you can resume by running the following commands: 
+
+```bash
+cd ~/data-journey/Data-Simulator/
 source config_env.sh
 ```
 
@@ -136,7 +195,13 @@ After a minute or two validate that your solution is working by inspecting the [
 
 By default you should see around .5 messages per second streaming into the topic.
 
-## Bring raw data to BigQuery
+
+
+
+ ## Lab 2. Data ingestion
+
+
+
 
 Now that your data ingestion is working correctly we move on to set up your processing infrastructure. Data processing infrastructures often have vastly diverse technical and business requirements. We will find the right setup for three completely different settings.
 
@@ -144,11 +209,17 @@ Now that your data ingestion is working correctly we move on to set up your proc
 
 To start out we aim for rapid iteration. We plan using BigQuery as Data Lakehouse - Combining Data Warehouse and Data Lake.
 
-To implement our lean ELT pipeline we need:
+
+### Part 1. Bring raw data to BigQuery (EL) - Pub/Sub BigQuery
+
+
+To implement our lean EL pipeline we need:
 
 * BigQuery Dataset
 * BigQuery Table
 * Pub/Sub BigQuery Subscription
+
+Pub/Sub enables real-time streaming into BigQuery. Learn more about [Pub/Sub integrations with BigQuery](https://cloud.google.com/pubsub/docs/bigquery).
 
 Start with creating a BigQuery Dataset named `data_journey`. The Dataset should contain a table named `pubsub_direct`.
 
@@ -170,10 +241,10 @@ Alternatively create the [Dataset](https://cloud.google.com/bigquery/docs/datase
 To create the Pub/Sub subscription in the console run:
 
 ```bash
-gcloud pubsub subscriptions create dj_subscription_bq_direct --topic=dj-pubsub-topic --bigquery-table=$GCP_PROJECT:data_journey.pubsub_direct
+gcloud pubsub subscriptions create dj_subscription_bq_direct --topic=dj-pubsub-topic --bigquery-table=$GCP_PROJECT:data_journey.pubsub_direct --project=$GCP_PROJECT
 ```
 
-## Validate ELT Pipeline implementation
+### Validate ELT Pipeline implementation
 
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription all the way up to your BigQuery destination table.
 
@@ -187,7 +258,10 @@ to direct an artificial click stream at your pipeline. If your datastream is sti
 
 After a minute or two you should find your BigQuery destination table populated with data points. The metrics of Pub/Sub topic and Subscription should also show the throughput. Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
 
-## Part 2: ETL(Extract Transform Load) - Cloud Run
+
+
+### Part 2: ETL (Extract Transform Load) - Cloud Run
+
 
 ELT is a relatively new concept. Cheap availability of Data Warehouses allows efficient on-demand transformations. That saves storage and increases flexibility. All you have to manage are queries, not transformed datasets. And you can always go back to data in it's raw form.
 
@@ -202,10 +276,10 @@ That means your pipeline should scale down to 0 when unused or up to whatever is
 To start off, let's reference the working directory:
 
 ```bash
-cd ETL/CloudRun
+cd ~/data-journey/ETL/CloudRun
 ```
 
-## ETL Step 1
+#### ETL - Step 1
 
 First component of our lightweight ETL pipeline is a BigQuery Table named `cloud_run`. The BigQuery Table should make use of the schema file `./schema.json`. The processing service will stream the transformed data into this table.
 
@@ -217,17 +291,23 @@ bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.cloud_run ./sche
 
 OR follow the documentation on how to [create a BigQuery table with schema through the console](https://cloud.google.com/bigquery/docs/tables#console).
 
-!!! Note: Check BQ schema for "weekday" column. Create it if needed.
+#### ETL - Step 2
 
-## ETL Step 2
-
-Second, let's set up your Cloud Run Processing Service. `./ETL/Cloud Run` contains all the necessary files.
+Second, let's set up your Cloud Run Processing Service. `./ETL/CloudRun` contains all the necessary files.
 
 Inspect the `Dockerfile` to understand how the container will be build.
 
-`main.py` defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic.
+`main.py` defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic. 
+
+We can use Gemini Code Assist:
+
+1. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
+2. Select the `main.py` file in the Explorer.
+3. Insert ``Please explain what main.py file do?`` into the Gemini prompt.
 
 Make sure to replace the required variables in `config.py` so you can access them safely in `main.py`.
+
+Open `~/data-journey/ETL/CloudRun/config.py` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/ETL/CloudRun/config.py">by clicking here</walkthrough-editor-open-file> and add your own variables.
 
 Once the code is completed build the container from `./ETL/Cloud Run` into a new [Container Repository](https://cloud.google.com/artifact-registry/docs/overview) named `data-processing-service`.
 
@@ -249,7 +329,7 @@ NAME: gcr.io/<project-id>/data-processing-service
 Only listing images in gcr.io/<project-id>. Use --repository to list images in other repositories.
 ```
 
-## ETL Step 3
+#### ETL - Step 3
 
 Next step is to deploy a new cloud run processing service based on the container you just build to your Container Registry.
 
@@ -257,16 +337,17 @@ Next step is to deploy a new cloud run processing service based on the container
 gcloud run deploy dj-run-service-data-processing --image gcr.io/$GCP_PROJECT/data-processing-service:latest --region=europe-west1 --allow-unauthenticated
 ```
 
-## ETL Step 4
+#### ETL - Step 4
 
 Define a Pub/Sub subscription named `dj-subscription_cloud_run` that can forward incoming messages to an endpoint.
 
 You will need to create a Push Subscription to the Pub/Sub topic we already defined.
 
 Enter the displayed URL of your processing in `./config_env.sh` as `PUSH_ENDPOINT` & reset the environment variables.
+Open `~/data-journey/Data-Simulator/config_env.sh` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file> and add your PUSH_ENDPOINT.
 
 ```bash
-source config_env.sh
+source /home/admin_/data-journey/Data-Simulator/config_env.sh
 ```
 
 Create PubSub push subscription:
@@ -277,25 +358,30 @@ gcloud pubsub subscriptions create dj-subscription_cloud_run \
     --push-endpoint=$PUSH_ENDPOINT
 ```
 
-OR
+OR read here: [defined via the console](https://cloud.google.com/pubsub/docs/create-subscription#pubsub_create_push_subscription-console).
 
-read it can be [defined via the console](https://cloud.google.com/pubsub/docs/create-subscription#pubsub_create_push_subscription-console).
 
-## Validate lightweight ETL pipeline implementation
+#### Validate lightweight ETL pipeline implementation
+
 
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription, Cloud Run Processing and all the way up to your BigQuery destination table.
 
 Run:
 
 ```bash
-python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
-#python3 ./datalayer/synth_data_stream.py --endpoint=$ENDPOINT_URL - old version
+python3 /home/admin_/data-journey/Data-Simulator/synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
 ```
 to direct an artificial click stream at your pipeline. No need to reinitialize if you still have the clickstream running from earlier.
 
 After a minute or two you should find your BigQuery destination table populated with data points. The metrics of Pub/Sub topic and Subscription should also show the throughput. Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
 
-## Part 2: ETL(Extract Transform Load) - Dataflow
+
+
+
+
+## Lab 3: ETL (Extract Transform Load) - Dataflow
+
+
 
 Cloud Run works smooth to apply simple data transformations. On top of that it scales to 0. So why not stop right there?
 
@@ -305,46 +391,34 @@ For extremely latency sensitive applications, and cases in which aggregations or
 
 Dataflow is a great tool to integrate into your pipeline for high volume data streams with complex transformations and aggregations. It is based on the open-source data processing framework Apache Beam.
 
-For the challenges below let's reference the working directory:
+For the lab below let's reference the working directory:
 
 ```bash
-cd ETL/Dataflow
+cd /home/admin_/data-journey/ETL/Dataflow
 ```
 
-## Challenge 1 (Dataflow)
+###  Dataflow - Step 1
 
 First component of our dataflow ETL pipeline is a BigQuery Table named `dataflow`, and `data_journey` dataset if not previously created.
 
 The BigQuery Table should make use of the schema file: `user_pseudo_id:STRING` and `event_count:INTEGER`.
 
-The processing service will stream the transformed data into this table.
+The processing service will stream the transformed data into this table. Read about [Big Query documentation](https://cloud.google.com/bigquery/docs/tables).
 
-**Hint:** The [Big Query documentation](https://cloud.google.com/bigquery/docs/tables) might be helpful to follow.
+Ok, let's create teh Bigquery table:
 
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
+```bash
+bq mk --location=$GCP_REGION --table $GCP_PROJECT:data_journey.dataflow user_pseudo_id:STRING,event_count:INTEGER
+```
+
 
 Second component is the connection between Pub/Sub topic and Dataflow job.
 
 Define a Pub/Sub subscription named `dj_subscription_dataflow` that can serve this purpose. You will define the actual dataflow job in the next step.
 
-**Hint:** Read about [types of subscriptions](https://cloud.google.com/pubsub/docs/subscriber) and [how to create them](https://cloud.google.com/pubsub/docs/create-subscription#create_subscriptions).
+Read about [types of subscriptions](https://cloud.google.com/pubsub/docs/subscriber) and [how to create them](https://cloud.google.com/pubsub/docs/create-subscription#create_subscriptions).
 
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
-
-## Challenge 1 (Dataflow) solution
-
-Here is the solution for the previous page.
-
-**BigQuery Table:**
-
-```bash
-bq --location=$GCP_REGION mk --dataset $GCP_PROJECT:data_journey
-bq mk --location=$GCP_REGION --table $GCP_PROJECT:data_journey.dataflow user_pseudo_id:STRING,event_count:INTEGER
-```
-
-**Pub/Sub Subscription:**
-
-You will need to create a Pull Subscription to the Pub/Sub topic we already defined. This is a fundamental difference to the Push subscriptions we encountered in the previous two examples. Dataflow will pull the data points from the queue independently, depending on worker capacity.
+We will need to create a Pull Subscription to the Pub/Sub topic we already defined. This is a fundamental difference to the Push subscriptions we encountered in the previous two examples. Dataflow will pull the data points from the queue independently, depending on worker capacity.
 
 Use this command:
 
@@ -356,7 +430,8 @@ OR
 
 read how it can be [defined via the console](https://cloud.google.com/pubsub/docs/create-subscription#pull_subscription).
 
-## Challenge 2 (Dataflow)
+
+### Dataflow - Step 2
 
 Finally, all we are missing is your Dataflow job to apply transformations, aggregations and connect Pub/Sub queue with BigQuery Sink.
 
@@ -364,98 +439,43 @@ Finally, all we are missing is your Dataflow job to apply transformations, aggre
 
 You need to apply custom aggregations on the incoming data. That means you need to create a dataflow job based on a [flex-template](https://cloud.google.com/dataflow/docs/guides/templates/using-flex-templates).
 
-Find & examine the pipeline code in `.ETL/Dataflow/dataflow_processing.py`.
+Find & examine the pipeline code in `/home/admin_/data-journey/ETL/Dataflow/dataflow_processing.py`. Use Gemini to get explanations:
 
-The pipeline is missing some code snippets. You will have to add three code snippets in `streaming_pipeline()`.
+1. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
+2. Insert ``What does dataflow_processing.py do?`` into the Gemini prompt.
+
 
 You need to design a pipeline that calculates number of events per user per 1 minute (they don't have to be unique). Ideally, we would like to see per one 1 hour, but for demonstration purposese we will shorten to 1 minute.
 
 The aggregated values should be written into your BigQuery table.
 
-Before you start coding replace the required variables in `config.py` so you can access them safely in `dataflow_processing.py`.
+Before you need to replace the required variables in `config.py` so you can access them safely in `dataflow_processing.py`.
+
+Open `/home/admin_/data-journey/ETL/Dataflow/config.py` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/ETL/Dataflow/config.py">by clicking here</walkthrough-editor-open-file> and add your project and location.
+
+Before moving to the next step take a few minutes to understand the dataflow processing.
 
 
-**Hint Read from PubSub Transform:** The [Python Documentation](https://beam.apache.org/releases/pydoc/current/apache_beam.io.gcp.pubsub.html) should help.
 
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
+### Dataflow - Step 3
 
-
-**Hint Data Windowing:** This is a challenging one. There are multiple ways of solving this. Easiest is a [FixedWindows](https://beam.apache.org/documentation/programming-guide/#using-single-global-window) with [AfterProcessingTime trigger](https://beam.apache.org/documentation/programming-guide/#event-time-triggers).
-
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
-
-
-**Hint Counting the events per user:** Check out some [core beam transforms](https://beam.apache.org/documentation/programming-guide/#core-beam-transforms).
-
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
-
-## Challenge 2 (Dataflow) solution
-
-Here is the solution for the previous page.
-
-**Read from PubSub Transform**
-
-```
-    json_message = (p
-                    # Listining to Pub/Sub.
-                    | "Read Topic" >> ReadFromPubSub(subscription=subscription)
-                    # Parsing json from message string.
-                    | "Parse json" >> beam.Map(json.loads))
-```
-
-**Data Windowing**
-
-```
-    fixed_windowed_items = (extract
-                          | "CountEventsPerMinute" >> beam.WindowInto(beam.window.FixedWindows(60),
-                                                                trigger=trigger.AfterWatermark(early=trigger.AfterProcessingTime(60), late=trigger.AfterCount(1)),
-                                                                accumulation_mode=trigger.AccumulationMode.DISCARDING)
-                       )
-```
-
-**Counting events per user**
-
-```
-    number_events =  (fixed_windowed_items | "Read" >> beam.Map(lambda x: (x["user_pseudo_id"], 1))
-                                        | "Grouping users" >> beam.GroupByKey()
-                                        | "Count" >> beam.CombineValues(sum)
-                                        | "Map to dictionaries" >> beam.Map(lambda x: {"user_pseudo_id": x[0], "event_count": int(x[1])})) 
-```
-
-Before finishing this section make sure to update the project_id and region in `.ETL/Dataflow/config.py`.
-
-## Challenge 3 (Dataflow)
 
 To create a flex-template we first need to build the pipeline code as container in the Container Registry.
 
-Build the Dataflow folder content as container named `beam-processing-flex-template` to your Container Registry.
+So we need to build the Dataflow folder content as container named `beam-processing-flex-template` to your Artifact Registry.
 
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
+Checkout the [docs](https://cloud.google.com/sdk/gcloud/reference/dataflow/flex-template/build) on how to build a dataflow flex-template.
 
-Create a Cloud Storage Bucket named `gs://<project-id>-gaming-events`. Create a Dataflow flex-template based on the built container and place it in your new GCS bucket.
-
-**Hint:** Checkout the [docs](https://cloud.google.com/sdk/gcloud/reference/dataflow/flex-template/build) on how to build a dataflow flex-template.
-
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
-
-## Challenge 3 (Dataflow) solution
-
-Here is the solution for the previous page.
-
-Note: Add data-journey-pipeline@datajourney[..]serviceaccount.com for artifact reader to avoid following error: "denied: Permission "artifactregistry.repositories.downloadArtifacts" denied on resource"
-
-**Dataflow folder content to Container Registry**
-
-```bash
-gcloud builds submit --tag gcr.io/$GCP_PROJECT/beam-processing-flex-template
-```
-
-**Dataflow flex template**
+Create a Cloud Storage Bucket named `gs://<project-id>-gaming-events` and create a Dataflow flex-template based on the built container and place it in your new GCS bucket:
 
 Create a new bucket by running:
 
 ```bash
 gsutil mb -c standard -l europe-west1 gs://$GCP_PROJECT-gaming-events
+```
+
+```bash
+gcloud builds submit --tag gcr.io/$GCP_PROJECT/beam-processing-flex-template
 ```
 
 Build the flex-template into your bucket using:
@@ -464,51 +484,289 @@ Build the flex-template into your bucket using:
 gcloud dataflow flex-template build gs://$GCP_PROJECT-gaming-events/df_templates/dataflow_template.json --image=gcr.io/$GCP_PROJECT/beam-processing-flex-template --sdk-language=PYTHON
 ```
 
-## Challenge 4 (Dataflow)
+### Dataflow - Step 4
+
 
 Run a Dataflow job based on the flex-template you just created.
 
 The job creation will take 5-10 minutes.
 
-**Hint:** The [documentation on the flex-template run command](https://cloud.google.com/sdk/gcloud/reference/dataflow/flex-template/run) should help.
+Check the [documentation on the flex-template run command](https://cloud.google.com/sdk/gcloud/reference/dataflow/flex-template/run).
 
-<walkthrough-info-message>**The solution will be shown on the next page**</walkthrough-info-message>
-
-## Challenge 4 (Dataflow) solution
-
-Here is the solution for the previous page.
-
+```bash
+# gcloud auth configure-docker gcr.io
+# ADD Artifact Registry to Service account: data-journey-pipeline@dataj2.iam.gserviceaccount.com
+# ( in IAM select data-journey-pipeline@... and add Artifact Registry Reader, Storage Creator / Viewer. )
+# ??  Ensure it has the "Storage Object Viewer" and "Storage Object Creator" roles for the necessary GCS bucket. - not sure it was needed.
+# Note: If you are running into access problems with dataflow job, add **Service Account user role to your user account**.
+# ( in IAM select your user (ex.: admin@... and add **Service Account user** )
+```
 ```bash
 gcloud dataflow flex-template run dataflow-job --template-file-gcs-location=gs://$GCP_PROJECT-gaming-events/df_templates/dataflow_template.json --region=europe-west1 --service-account-email="data-journey-pipeline@$GCP_PROJECT.iam.gserviceaccount.com" --max-workers=1 --network=terraform-network
 ```
 
-## Validate Dataflow ETL pipeline implementation
+#### Validate Dataflow ETL pipeline implementation
 
 You can now stream website interaction data points through your Cloud Run Proxy Service, Pub/Sub Topic & Subscription, Dataflow job and all the way up to your BigQuery destination table.
 
 Run:
 
 ```bash
-python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
+python3 /home/admin_/data-journey/Data-Simulator/synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$FILE
 ```
 
 to direct an artificial click stream at your pipeline. No need to reinitialize if you still have the clickstream running from earlier.
 
 After a minute or two you should find your BigQuery destination table populated with data points. The metrics of Pub/Sub topic and Subscription should also show the throughput. Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
 
-## Part 2.1: Extract Load Transform (ELT)
 
-In comparison to ETL there also exists a process called ELT. This can be used if the e.g. the transformations to be done on the data are not as memory critical and could be done after loading the data into the destination format & location.
 
-If you want to explore this further we have curated some code in the following [repository](https://github.com/NucleusEngineering/data-journey/tree/tutorial/ELT).
 
-Otherwise you can skip this part and continue on the next page.
 
-## Part 3: Change Data Capture (CDC)
+
+## Lab 4: Dataform (ELT)
+
+
+<walkthrough-tutorial-duration duration="30"></walkthrough-tutorial-duration>
+<!--{{ author('Cosmin Pintoiu', 'https://www.linkedin.com/in/cosmin-pintoiu/') }} -->
+<walkthrough-tutorial-difficulty difficulty="3"></walkthrough-tutorial-difficulty>
+
+
+In comparison to ETL, there's also a process called ELT. ELT can be used if the data transformations are not as memory critical and can be performed after loading the data into the target system and location.
+
+
+During this lab, you gather consolidate views on:
+* **Returning Users**
+This view aggregates the first and the last engagement of by user and defines a churned user: Churned -> If last activity was within 24h of sign up
+
+* **User Demographics**
+This view extracts some demographic data from the user that has been collected by Google Analytics; E.g. country, device/OS, language
+
+* **User Behaviour**
+This view aggregates KPIs that describe the user behaviour. E.g.  count of completed levels, sum of scores, # of challenges to a friend
+
+  
+### Dataform 
+
+Dataform is a fully managed service that helps data teams build, version control, and orchestrate SQL workflows in BigQuery. It provides an end-to-end experience for data transformation, including:
+
+* Table definition: Dataform provides a central repository for managing table definitions, column descriptions, and data quality assertions. This makes it easy to keep track of your data schema and ensure that your data is consistent and reliable.  
+* Dependency management: Dataform automatically manages the dependencies between your tables, ensuring that they are always processed in the correct order. This simplifies the development and maintenance of complex data pipelines.  
+* Orchestration: Dataform orchestrates the execution of your SQL workflows, taking care of all the operational overhead. This frees you up to focus on developing and refining your data pipelines.
+
+Dataform is built on top of Dataform Core, an open source SQL-based language for managing data transformations. Dataform Core provides a variety of features that make it easy to develop and maintain data pipelines, including:
+
+* Incremental updates: Dataform Core can incrementally update your tables, only processing the data that has changed since the last update. 
+* Slowly changing dimensions: Dataform Core provides built-in support for slowly changing dimensions, which are a common type of data in data warehouses.   
+* Reusable code: Dataform Core allows you to write reusable code in JavaScript, which can be used to implement complex data transformations and workflows.
+
+Dataform is integrated with a variety of other Google Cloud services, including GitHub, GitLab, Cloud Composer, and Workflows. This makes it easy to integrate Dataform with your existing development and orchestration workflows.  
+
+### Use Cases for Dataform
+
+Dataform can be used for a variety of use cases, including:
+
+* Data Warehousing: Dataform can be used to build and maintain data warehouses that are scalable and reliable.  
+* Data Engineering: Dataform can be used to develop and maintain data pipelines that transform and load data into data warehouses.  
+* Data Analytics: Dataform can be used to develop and maintain data pipelines that prepare data for analysis.  
+* Machine Learning: Dataform can be used to develop and maintain data pipelines that prepare data for machine learning models.
+
+***
+
+
+### Create a Dataform Pipeline
+
+First step in implementing a pipeline in Dataform is to set up a repository and a development environment. Detailed quickstart and instructions can be found [here](https://cloud.google.com/dataform/docs/quickstart-create-workflow).
+
+### Create a Repository in Dataform
+
+Go to [Dataform](https://console.cloud.google.com/bigquery/dataform) (part of the BigQuery console).
+
+First let's make sure we have the Project number in a var:
+```bash
+gcloud auth activate-service-account [Provided_USEr]
+gcloud auth login
+export PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT" --format="value(projectNumber)")
+```
+Now, let's follow the steps:
+
+1. Click on <walkthrough-spotlight-pointer locator="css(a[id$=create-repository])">CREATE REPOSITORY</walkthrough-spotlight-pointer>
+
+2. Use the following values when creating the repository:
+
+    Repository ID: `datajourney-repository` \
+    Region: `europe-west1` \
+    Service Account: `Default Dataform service account`
+
+3. And click on <walkthrough-spotlight-pointer locator="text('create')">CREATE</walkthrough-spotlight-pointer>
+```bash
+export DATAFORM_SA="service-${PROJECT_NUMBER}@gcp-sa-dataform.iam.gserviceaccount.com"
+```
+The dataform service account you see on your screen should be `{{ DATAFORM_SA }}`. We will need it later.
+
+
+Next, click <walkthrough-spotlight-pointer locator="text('go to repositories')">GO TO REPOSITORIES</walkthrough-spotlight-pointer>, and then choose the <walkthrough-spotlight-pointer locator="text('hackathon-repository')">hackathon-repository</walkthrough-spotlight-pointer> you just created.
+
+
+
+### Create a Dataform Workspace
+
+You should now be in the <walkthrough-spotlight-pointer locator="text('development workspaces')">Development workspaces</walkthrough-spotlight-pointer> tab of the hackathon-repository page.
+
+First, click <walkthrough-spotlight-pointer locator="text('create development workspace')">Create development workspace</walkthrough-spotlight-pointer> to create a copy of your own repository.  You can create, edit, or delete content in your repository without affecting others.
+
+
+In the **Create development workspace** window, do the following:  
+   1. In the <walkthrough-spotlight-pointer locator="semantic({textbox 'Workspace ID'})">Workspace ID</walkthrough-spotlight-pointer> field, enter `datajourney-workspace` or any other name you like.
+
+   2. Click <walkthrough-spotlight-pointer locator="text('create')">CREATE</walkthrough-spotlight-pointer>
+   3. The development workspace page appears.  
+   4. Click on the newly created `datajourney-workspace` 
+   5. Click <walkthrough-spotlight-pointer locator="css(button[id$=initialize-workspace-button])">Initialize workspace</walkthrough-spotlight-pointer>
+
+### Adjust workflow settings
+
+We will now set up our custom workflow.
+
+1. Edit the `workflow_settings.yaml`file :
+
+2. Replace `defaultDataset` value with ``{{ PROJECT_ID }}``
+
+3. Make sure `defaultProject` value is ``{{ PROJECT_ID }}``
+
+4. Click on <walkthrough-spotlight-pointer locator="text('install packages')">INSTALL PACKAGES</walkthrough-spotlight-pointer> ***only once***. You should see a message at the bottom of the page:
+
+    *Package installation succeeded*
+
+Next, let's create several workflow files and directories:
+
+1. Delete the following files from the <walkthrough-spotlight-pointer locator="semantic({treeitem 'Toggle node *definitions more'})">*definitions</walkthrough-spotlight-pointer> folder:
+
+    `first_view.sqlx`
+    `second_view.sqlx`
+
+2. Within <walkthrough-spotlight-pointer locator="semantic({treeitem 'Toggle node definitions more'})">*definitions</walkthrough-spotlight-pointer> create a new directory called `ml_models`, `outputs`, `sources`, `staging`:
+
+   ![](../rsc/newdirectory.png)
+
+3. Click on `ml_models` directory and create the following file:
+      ```
+      logistic_regression_model.sqlx
+      ```
+   Copy the contents to each of those files:
+
+    <walkthrough-editor-open-file filePath="ELT/definitions/ml_models/logistic_regression_model.sqlx">`logistic_regression_model`</walkthrough-editor-open-file>
+    
+4. Click on `outputs` directory and create the following file:
+      ```
+      churn_propensity.sqlx
+      ```
+   Copy the contents to each of those files:
+
+    <walkthrough-editor-open-file filePath="ELT/definitions/outputs/churn_propensity.sqlx">`churn_propensity`</walkthrough-editor-open-file>
+    
+5. Click on `sources` directory and create the following file:
+      ```
+      analytics_events.sqlx
+      ```
+    Copy the contents to each of those files:
+
+    <walkthrough-editor-open-file filePath="ELT/definitions/sources/analytics_events.sqlx">`analytics_events`</walkthrough-editor-open-file>
+    
+6. Click on `staging` directory and create the following files:
+      ```
+      user_aggregate_behaviour.sqlx
+      ```
+      ```
+      user_demographics.sqlx
+      ```
+      ```
+      user_returninginfo.sqlx
+      ```
+      Copy the contents to each of those files:
+
+    <walkthrough-editor-open-file filePath="ELT/definitions/staging/user_aggregate_behaviour.sqlx">`user_aggregate_behaviour`</walkthrough-editor-open-file>
+    <walkthrough-editor-open-file filePath="ELT/definitions/staging/user_demographics.sqlx">`user_demographics`</walkthrough-editor-open-file>
+    <walkthrough-editor-open-file filePath="ELT/definitions/staging/user_returninginfo.sqlx">`user_returninginfo`</walkthrough-editor-open-file>
+
+
+Note: Analyze the content of the sqlx file, we could use Gemini Code assist to get explanations.
+
+Let's ask Gemini:
+
+1. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
+2. Insert ``Please explain how the user_aggregate_behavior works`` into the Gemini prompt.
+
+We still have 3 files to configure before we execute the workflow:
+
+Create and Copy the contents to each of those files:
+```
+dataform.json
+```
+```
+package-lock.json
+```
+```
+package.json
+```
+
+<walkthrough-editor-open-file filePath="ELT/dataform.json">`dataform.json`</walkthrough-editor-open-file>
+<walkthrough-editor-open-file filePath="ELT/package-lock.json">`package-lock.json`</walkthrough-editor-open-file>
+<walkthrough-editor-open-file filePath="ELT/package.json">`package.json`</walkthrough-editor-open-file>
+
+Notice the usage of `$ref` in line 12, of `ELT/definitions/ml_models/logistic_regression_model.sqlx`. The advantages of using `$ref` in Dataform are
+
+* Automatic Reference Management: Ensures correct fully-qualified names for tables and views, avoiding hardcoding and simplifying environment configuration.  
+* Dependency Tracking: Builds a dependency graph, ensuring correct creation order and automatic updates when referenced tables change.  
+* Enhanced Maintainability: Supports modular and reusable SQL scripts, making the codebase easier to maintain and less error-prone.
+
+***
+
+### **Execute Dataform workflows**
+
+
+First, let's bring the events data we will use in BQ:
+
+```bash
+cd /home/admin_/data-journey/ELT \
+gcloud storage cp /home/admin_/data-journey/ELT/events gs://example-bucket-name-${GCP_PROJECT} \
+bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.events \
+bq load --source_format=PARQUET $GCP_PROJECT:data_journey.events
+```
+
+Run the dataset creation by **Tag**. Tag allow you to just execute parts of the workflows and not the entire workflow. 
+
+1. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>
+
+2. Click on <walkthrough-spotlight-pointer locator="semantic({link 'Details'})">DETAILS</walkthrough-spotlight-pointer>
+
+    Notice the Access Denied error on BigQuery for the dataform service account `{{ DATAFORM_SA }}`
+
+3. Go to [IAM & Admin](https://console.cloud.google.com/iam-admin)
+
+4. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Grant access'})">GRANT ACCESS</walkthrough-spotlight-pointer> and grant `BigQuery Data Editor , BigQuery Job User and BigQuery Connection User` to the principal `{{ DATAFORM_SA }}`.
+
+5. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Save'})">SAVE</walkthrough-spotlight-pointer>
+
+  Note: If you encounter a policy update screen, just click on update.
+
+6. Go back to [Dataform](https://console.cloud.google.com/bigquery/dataform) within in BigQuery, and retry <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>. \
+Notice the execution status. It should be a success.  
+ 
+7. Lastly, go to Compiled graph and explore it.
+Go to [Dataform](https://console.cloud.google.com/bigquery/dataform)\> <walkthrough-spotlight-pointer locator="text('datajourney-repository')">datajourney-repository</walkthrough-spotlight-pointer>>`datajourney-workspace` \> <walkthrough-spotlight-pointer locator="semantic({tab 'Compiled graph tab'})">COMPILED GRAPH</walkthrough-spotlight-pointer>
+
+***
+
+
+
+## Lab 5: Change Data Capture (CDC)
+
+
 
 Datastream is a serverless and easy-to-use Change Data Capture (CDC) and replication service that allows you to synchronize data across heterogeneous databases, storage systems, and applications reliably and with minimal latency. In this lab you’ll learn how to replicate data changes from your OLTP workloads into BigQuery, in real time.
 
-In this hands-on lab you’ll deploy the below mentioned resources all at once via terrafrom or individually. Then, you will create and start a Datastream stream for replication and CDC.
+This hands-on lab will guide you through deploying the resources mentioned below, either all at once via Terraform or separately. You will then proceed to create and start a Datastream stream for replication and CDC (Change Data Capture).
 
 What you’ll do:
 
@@ -530,9 +788,9 @@ git clone https://github.com/NucleusEngineering/data-journey.git
 cd data-journey/CDC
 ```
 
-## Set up cloud environment
+### Set up cloud environment
 
-Initilize your account and project
+Initialize your account and project
 
 <walkthrough-info-message>If you are using the Google Cloud Shell you can skip this step of initalization. Continue with setting the project.</walkthrough-info-message>
 
@@ -556,10 +814,10 @@ gcloud config list
 Set compute zone
 
 ```bash
-gcloud config set compute/zone us-central1-f
+gcloud config set compute/zone europe-west1
 ```
 
-## Deploy using Terraform
+### Deploy using Terraform
 
 Use Terraform to deploy the following services and networking resources defined in the `main.tf` file
 
@@ -622,7 +880,7 @@ google_compute_network.vpc_network: Creating...
 Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
 ```
 
-## Import a SQL file into MySQL
+### Import a SQL file into MySQL
 
 Next, you will copy the `create_mysql.sql` file below into the Cloud Storage bucket you created above, make the file accessible to your Cloud SQL service account, and import the SQL command into your database.
 
@@ -651,7 +909,7 @@ gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${project_id}
 gcloud sql import sql mysql gs://${project_id}/resources/create_mysql.sql --quiet
 ```
 
-## Create Datastream resources
+### Create Datastream resources
 
 In the Cloud Console UO, navigate to Datastream then click Enable to enable the Datastream AP.
 
@@ -662,12 +920,14 @@ My SQL connection profile:
 * The IP and port of the Cloud SQL for MySQL instance created earlier
 * username: `root`, password: `password123`
 * encryption: none
-* connectivity method: IP allowlisting BigQuery connection profile:
+* connectivity method: IP allowlisting
+
+BigQuery connection profile:
 * connection profile ID
 
-Create stream by selecting MyQL and BigQuery connection profiles, and make sure to mark the tables you want to replicate (we will only replicate the datastream-datajourney database), and finally run validation, and create and start the stream.
+Create stream by selecting MyQL and BigQuery connection profiles, and make sure to mark the tables you want to replicate (we will only replicate the datastream-datajourney database), and finally run validation, then create and start the stream.
 
-## View the data in BiqQuery
+### View the data in BiqQuery
 
 View these tables in the BigQuery UI.
 
@@ -694,16 +954,16 @@ INSERT INTO database_datajourney.example_table (event_timestamp, event_name, use
 ```
 
 ```bash
-SQL_FILE=update_mysql.sql
-SERVICE_ACCOUNT=$(gcloud sql  describe mysql | grep serviceAccountEmailAddress | awk '{print $2;}')
+SQL_FILE=update_mysql.sql \
+SERVICE_ACCOUNT=$(gcloud sql instances describe mysql | grep serviceAccountEmailAddress | awk '{print $2;}') \
 
-gsutil cp ${SQL_FILE} gs://${project_id}/resources/${SQL_FILE}
-gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${project_id}
+gsutil cp ${SQL_FILE} gs://${project_id}/resources/${SQL_FILE} \ 
+gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${project_id} \ 
 
 gcloud sql import sql mysql gs://${project_id}/resources/${SQL_FILE} --quiet
 ```
 
-## Verify updates in BigQuery
+### Verify updates in BigQuery
 
 Run the query below to verify data changes in BiqQuery:
 
@@ -716,7 +976,7 @@ LIMIT
  100
 ```
 
-## Terraform Destroy
+### Terraform Destroy
 
 Use Terraform to destroy all resources
 
@@ -724,7 +984,7 @@ Use Terraform to destroy all resources
 terraform destroy
 ```
 
-## Machine Learning Datathon
+## Lab 6. Machine Learning Datathon
 
 Now that we learned how to ingest data into BigQuery from PubSub Messages and transform them via ETL, let's continue with the [next step in the end-to-end data journey](https://github.com/NucleusEngineering/data-journey/blob/main/rsc/architecture.png): Getting insights from data via Machine Learning.
 
