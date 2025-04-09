@@ -360,5 +360,10 @@
     "mode": "NULLABLE",
     "name": "event_dimensions",
     "type": "RECORD"
+  },
+    {
+    "mode": "NULLABLE",
+    "name": "weekday",
+    "type": "STRING"
   }
 ]
