@@ -49,16 +49,27 @@ def streaming_pipeline(project, region):
     p = beam.Pipeline(DataflowRunner(), options=options)
 
     # Receiving message from Pub/Sub & parsing json from string.
-    <ADD YOUR CODE HERE>
+    json_message = (p
+                    # Listining to Pub/Sub.
+                    | "Read Topic" >> ReadFromPubSub(subscription=subscription)
+                    # Parsing json from message string.
+                    | "Parse json" >> beam.Map(json.loads))
 
     # Extracting user pseudo ids and event names.
     extract = (json_message | "Map" >> beam.Map(lambda x: { "user_pseudo_id": x["user_pseudo_id"], "event_name": x["event_name"]}))
 
     # Appying windowing funtion
-    <ADD YOUR CODE HERE>
+    fixed_windowed_items = (extract
+                          | "CountEventsPerMinute" >> beam.WindowInto(beam.window.FixedWindows(60),
+                                                                trigger=trigger.AfterWatermark(early=trigger.AfterProcessingTime(60), late=trigger.AfterCount(1)),
+                                                                accumulation_mode=trigger.AccumulationMode.DISCARDING)
+                       )
 
     # Calculating numbers of events per user in a minute
-    <ADD YOUR CODE HERE>
+    number_events =  (fixed_windowed_items | "Read" >> beam.Map(lambda x: (x["user_pseudo_id"], 1))
+                                        | "Grouping users" >> beam.GroupByKey()
+                                        | "Count" >> beam.CombineValues(sum)
+                                        | "Map to dictionaries" >> beam.Map(lambda x: {"user_pseudo_id": x[0], "event_count": int(x[1])}))
     
     # Writing summed values to BigQuery
     dataflow_schema = "user_pseudo_id:STRING, event_count:INTEGER"
