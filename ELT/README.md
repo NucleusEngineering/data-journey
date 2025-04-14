@@ -58,7 +58,7 @@ Go to [Dataform](https://console.cloud.google.com/bigquery/dataform) (part of th
 
 First let's make sure we have the Project number in a var:
 ```bash
-gcloud auth activate-service-account [Provided_USEr]
+gcloud auth activate-service-account [Provided_User]
 gcloud auth login
 export PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT" --format="value(projectNumber)")
 ```
@@ -69,7 +69,7 @@ Now, let's follow the steps:
 2. Use the following values when creating the repository:
 
     Repository ID: `datajourney-repository` \
-    Region: `europe-west1` \
+    Region: `US` \
     Service Account: `Default Dataform service account`
 
 3. And click on <walkthrough-spotlight-pointer locator="text('create')">CREATE</walkthrough-spotlight-pointer>
