@@ -580,22 +580,34 @@ First step in implementing a pipeline in Dataform is to set up a repository and 
 
 ### Create a Repository in Dataform
 
-Go to [Dataform](https://console.cloud.google.com/bigquery/dataform) (part of the BigQuery console).
+Go to [Dataform](https://console.cloud.google.com/bigquery/dataform) (part of the BigQuery console). Open Cloud Terminal and let's start this tutorial again in teh new Cloud Console tab you just opened:
 
 First let's make sure we have the Project number in a var:
 ```bash
-gcloud auth activate-service-account [Provided_USEr]
+gcloud config set project [PROJECT_ID]
+```
+
+```bash
+cd ~/data-journey/Data-Simulator \
+source config_env.sh
+```
+```bash
 gcloud auth login
 export PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT" --format="value(projectNumber)")
 ```
-Now, let's follow the steps:
+```bash
+cd ~/data-journey/.journey \
+cloudshell launch-tutorial tutorial.neos.md
+```
+
+Now, let's resume teh tutorial and follow the steps in the UI:
 
 1. Click on <walkthrough-spotlight-pointer locator="css(a[id$=create-repository])">CREATE REPOSITORY</walkthrough-spotlight-pointer>
 
 2. Use the following values when creating the repository:
 
     Repository ID: `datajourney-repository` \
-    Region: `europe-west1` \
+    Region: `us-central1` \
     Service Account: `Default Dataform service account`
 
 3. And click on <walkthrough-spotlight-pointer locator="text('create')">CREATE</walkthrough-spotlight-pointer>
@@ -724,7 +736,7 @@ Notice the usage of `$ref` in line 12, of `ELT/definitions/ml_models/logistic_re
 
 ### **Execute Dataform workflows**
 
-
+<!-- this is not necessary anymore as we decided to use the dataset in the US and run dataform in the US-central1 region
 First, let's bring the events data we will use in BQ:
 
 ```bash
@@ -733,7 +745,7 @@ gcloud storage cp /home/admin_/data-journey/ELT/events gs://example-bucket-name-
 bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.events \
 bq load --source_format=PARQUET $GCP_PROJECT:data_journey.events
 ```
-
+-->
 Run the dataset creation by **Tag**. Tag allow you to just execute parts of the workflows and not the entire workflow. 
 
 1. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>
