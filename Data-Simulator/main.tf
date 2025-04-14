@@ -141,9 +141,9 @@ resource "google_project_iam_member" "gcs_user" {
   member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
 }
 
-resource "google_artifact_registry_repository" "gcrio" {
-  location      = "us"
-  repository_id = "gcr.io"
+resource "google_artifact_registry_repository" "eugcrio" {
+  location      = "europe"
+  repository_id = "eu.gcr.io"
   description   = "docker repository"
   format        = "DOCKER"
 }
@@ -177,7 +177,7 @@ resource "google_bigquery_job" "extract_sample" {
 # 2. Building a container
 resource "null_resource" "build_and_push_docker_image" {
   provisioner "local-exec" {
-    command = "gcloud builds submit cloud-run-pubsub-proxy --tag gcr.io/${var.project_id}/pubsub-proxy"
+    command = "gcloud builds submit cloud-run-pubsub-proxy --tag eu.gcr.io/${var.project_id}/pubsub-proxy"
   }
 }
 
@@ -189,7 +189,7 @@ resource "google_cloud_run_service" "proxy_service" {
   template {
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/pubsub-proxy"
+        image = "eu.gcr.io/${var.project_id}/pubsub-proxy"
       }
     }
   }
