@@ -135,6 +135,19 @@ resource "google_project_iam_member" "editor" {
   member = "serviceAccount:service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
 }
 
+resource "google_project_iam_member" "gcs_user" {
+  project = var.project_id
+  role   = "roles/storage.objectUser"
+  member = "serviceAccount:${data.google_compute_default_service_account.default.email}"
+}
+
+resource "google_artifact_registry_repository" "gcrio" {
+  location      = "us"
+  repository_id = "gcr.io"
+  description   = "docker repository"
+  format        = "DOCKER"
+}
+
 # Data Simulation
 # 1. Create sample data source
 
