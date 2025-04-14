@@ -1,11 +1,25 @@
- ## Lab 4. Dataform (ELT)
+## Lab 4: Dataform (ELT)
+
 
 <walkthrough-tutorial-duration duration="30"></walkthrough-tutorial-duration>
-<!--> {{ author('Cosmin Pintoiu', 'https://www.linkedin.com/in/cosmin-pintoiu/') }} /-->
+<!--{{ author('Cosmin Pintoiu', 'https://www.linkedin.com/in/cosmin-pintoiu/') }} -->
 <walkthrough-tutorial-difficulty difficulty="3"></walkthrough-tutorial-difficulty>
 
-During this lab, you gather user feedback to assess the impact of model adjustments on real-world use (prediction), ensuring that our fraud detection system effectively balances accuracy with user satisfaction. 
-* Use Dataform, BigQuery and Gemini to Perform sentiment analysis of customer feedback.
+
+In comparison to ETL, there's also a process called ELT. ELT can be used if the data transformations are not as memory critical and can be performed after loading the data into the target system and location.
+
+
+During this lab, you gather consolidate views on:
+* **Returning Users**
+This view aggregates the first and the last engagement of by user and defines a churned user: Churned -> If last activity was within 24h of sign up
+
+* **User Demographics**
+This view extracts some demographic data from the user that has been collected by Google Analytics; E.g. country, device/OS, language
+
+* **User Behaviour**
+This view aggregates KPIs that describe the user behaviour. E.g.  count of completed levels, sum of scores, # of challenges to a friend
+
+  
 ### Dataform 
 
 Dataform is a fully managed service that helps data teams build, version control, and orchestrate SQL workflows in BigQuery. It provides an end-to-end experience for data transformation, including:
@@ -44,26 +58,30 @@ Go to [Dataform](https://console.cloud.google.com/bigquery/dataform) (part of th
 
 First let's make sure we have the Project number in a var:
 ```bash
+gcloud auth activate-service-account [Provided_USEr]
+gcloud auth login
 export PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT" --format="value(projectNumber)")
 ```
-Now, let's follow the steps:"
+Now, let's follow the steps:
 
-1. Click on <walkthrough-spotlight-pointer locator="css(a[id$=create-repository])">+ CREATE REPOSITORY</walkthrough-spotlight-pointer>
+1. Click on <walkthrough-spotlight-pointer locator="css(a[id$=create-repository])">CREATE REPOSITORY</walkthrough-spotlight-pointer>
 
 2. Use the following values when creating the repository:
 
     Repository ID: `datajourney-repository` \
-    Region: `us-central1` \
+    Region: `europe-west1` \
     Service Account: `Default Dataform service account`
 
 3. And click on <walkthrough-spotlight-pointer locator="text('create')">CREATE</walkthrough-spotlight-pointer>
-
-{% set DATAFORM_SA = "service-{}@gcp-sa-dataform.iam.gserviceaccount.com".format(PROJECT_NUMBER) %}
-
+```bash
+export DATAFORM_SA="service-${PROJECT_NUMBER}@gcp-sa-dataform.iam.gserviceaccount.com"
+```
 The dataform service account you see on your screen should be `{{ DATAFORM_SA }}`. We will need it later.
 
 
 Next, click <walkthrough-spotlight-pointer locator="text('go to repositories')">GO TO REPOSITORIES</walkthrough-spotlight-pointer>, and then choose the <walkthrough-spotlight-pointer locator="text('hackathon-repository')">hackathon-repository</walkthrough-spotlight-pointer> you just created.
+
+
 
 ### Create a Dataform Workspace
 
@@ -181,6 +199,14 @@ Notice the usage of `$ref` in line 12, of `ELT/definitions/ml_models/logistic_re
 ### **Execute Dataform workflows**
 
 
+First, let's bring the events data we will use in BQ:
+
+```bash
+cd /home/admin_/data-journey/ELT \
+gcloud storage cp /home/admin_/data-journey/ELT/events gs://example-bucket-name-${GCP_PROJECT} \
+bq mk --location=europe-west1 --table $GCP_PROJECT:data_journey.events \
+bq load --source_format=PARQUET $GCP_PROJECT:data_journey.events
+```
 
 Run the dataset creation by **Tag**. Tag allow you to just execute parts of the workflows and not the entire workflow. 
 
@@ -205,3 +231,4 @@ Notice the execution status. It should be a success.
 Go to [Dataform](https://console.cloud.google.com/bigquery/dataform)\> <walkthrough-spotlight-pointer locator="text('datajourney-repository')">datajourney-repository</walkthrough-spotlight-pointer>>`datajourney-workspace` \> <walkthrough-spotlight-pointer locator="semantic({tab 'Compiled graph tab'})">COMPILED GRAPH</walkthrough-spotlight-pointer>
 
 ***
+
