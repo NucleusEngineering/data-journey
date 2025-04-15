@@ -159,7 +159,7 @@ resource "google_storage_bucket" "dest_bucket" {
 }
 
 resource "google_bigquery_job" "extract_sample" {
-  job_id     = "extract_json_sample_0"
+  job_id     = "extract_json_sample_${replace(timestamp(), ":", "-")}"
 
   extract {
     destination_uris = ["${google_storage_bucket.dest_bucket.url}/extract"]
