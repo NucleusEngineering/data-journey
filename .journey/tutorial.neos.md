@@ -119,8 +119,8 @@ Clone the github repo we'll be using in this walkthrough:
 
 ```bash
 cd ~
-git clone https://github.com/ccpintoiu/data-journey
-cd data-journey/Data-Simulator
+git clone https://github.com/NucleusEngineering/data-journey
+cd ~/data-journey/Data-Simulator
 ```
 
 We will be using Terraform to provision infrastructure and resources, setup Network, Service Account and Permissions. 
@@ -130,13 +130,13 @@ Want to know what exactly the Terraform configuration file does?
 
 Let's ask Gemini:
 
-1. Open  <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/main.tf">`main.tf`</walkthrough-editor-open-file>.
+1. Open  <walkthrough-editor-open-file filePath="~/data-journey/Data-Simulator/main.tf">`main.tf`</walkthrough-editor-open-file>.
 2. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
 3. Insert ``What main.tf file do?`` into the Gemini prompt.
 
 
 First, we need to change the terraform variable file. You can open files directly from this tutorial:
-Open `terraform.tfvars` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/terraform.tfvars">by clicking here</walkthrough-editor-open-file> and add your own project id.
+Open `terraform.tfvars` <walkthrough-editor-open-file filePath="~/data-journey/Data-Simulator/terraform.tfvars">by clicking here</walkthrough-editor-open-file> and add your own project id.
 
 ❗ Please do not include any whitespaces when setting these variablers.
 
@@ -165,10 +165,10 @@ gcloud run services list
 
 The endpoint URL refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. 
 
-We need to add GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`<walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file>.
+We need to add GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`<walkthrough-editor-open-file filePath="~/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file>.
 
 
-First, enter the variables in the config file. You can open it <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">
+First, enter the variables in the config file. You can open it <walkthrough-editor-open-file filePath="~/data-journey/Data-Simulator/config_env.sh">
 in the Cloud Shell Editor </walkthrough-editor-open-file> to read or edit it.
 
 Set all necessary environment variables by running:
