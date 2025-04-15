@@ -185,6 +185,8 @@ resource "null_resource" "build_and_push_docker_image" {
 resource "google_cloud_run_service" "proxy_service" {
   name     = "dj-run-service-pubsub-proxy"
   location = "europe-west1"
+  # Add a dependency on the null_resource
+  depends_on = [null_resource.build_and_push_docker_image]
 
   template {
     spec {
