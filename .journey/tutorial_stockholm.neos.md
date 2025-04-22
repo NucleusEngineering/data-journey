@@ -381,6 +381,7 @@ Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
 ### Import a SQL file into MySQL
 
 Next, you will copy the `create_mysql.sql` file below into the Cloud Storage bucket you created above, make the file accessible to your Cloud SQL service account, and import the SQL command into your database.
+**Note:** The content of the SQL file is just here for informational purposes. Continue with the terminal commands below.
 
 ```
 CREATE DATABASE IF NOT EXISTS database_datajourney;
@@ -426,6 +427,7 @@ My SQL connection profile:
 * username: `root`, password: `password123`
 * encryption: none
 * connectivity method: IP allowlisting
+* region: eu-west1
 
 BigQuery connection profile:
 * connection profile ID
