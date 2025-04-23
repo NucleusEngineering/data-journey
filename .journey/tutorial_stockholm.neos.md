@@ -297,7 +297,7 @@ Initialize your account and project
 gcloud init
 ```
 
-Set Google Cloud Project
+Set Google Cloud Project, if not already done so.
 
 ```bash
 export project_id=<your-project-id>
@@ -434,7 +434,7 @@ My SQL connection profile:
 BigQuery connection profile:
 * connection profile ID
 
-Create stream by selecting MyQL and BigQuery connection profiles, and make sure to mark the tables you want to replicate (we will only replicate the database_datajourney database), and finally run validation, then create and start the stream.
+Create stream by selecting MyQL and BigQuery connection profiles **(also make sure it runs in the eu and not us region)**, and make sure to mark the tables you want to replicate (we will only replicate the database_datajourney database), and finally run validation, then create and start the stream.
 
 ### View the data in BiqQuery
 
