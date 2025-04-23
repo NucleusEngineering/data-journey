@@ -1,6 +1,7 @@
 config {
   type: "table",
   schema: "outputs",
+  tags: ["audience"],
   description: "Combining aggregate, demogrpahic and returning info into one table for churned users",
    assertions: {                                 // https://docs.dataform.co/reference#ITableAssertions
     nonNull: ["cnt_user_engagement", "churned"], // select from dropdown to run assertion only. If no values are retured assertion check was successful
