@@ -3,7 +3,7 @@ config {
   schema: "outputs"
 }
 
-CREATE MODEL  ${dataform.projectConfig.vars.ml_models_dataset}.dataform_logistic_regression_baseline
+CREATE MODEL  `${dataform.projectConfig.vars.ml_models_dataset}.dataform_logistic_regression_baseline`
 OPTIONS
   (MODEL_TYPE='LOGISTIC_REG',
   input_label_cols=["churned"]) 
