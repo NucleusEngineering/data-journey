@@ -140,9 +140,6 @@ Open `terraform.tfvars` <walkthrough-editor-open-file filePath="/home/admin_/dat
 Build the basic permissions & networking setup via terraform apply.
 
 ```bash
-gcloud config set project [PROJECT_ID]
-```
-```bash
 terraform init -upgrade
 ```
 
@@ -160,7 +157,7 @@ gcloud run services list
 
 The endpoint URL refers to the URL of the proxy container deployed to Cloud Run with the streaming data input. 
 
-We need to add GCP Project ID, the GCP Region and the endpoint URL in `./config_env.sh`<walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file>.
+We need to add GCP Project ID, the GCP Region (europe-west1) and the endpoint URL in `./config_env.sh`<walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file>.
 
 
 First, enter the variables in the config file. You can open it <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">
@@ -189,6 +186,8 @@ python3 synth_json_stream.py --endpoint=$ENDPOINT_URL --bucket=$BUCKET --file=$F
 After a minute or two validate that your solution is working by inspecting the [metrics](https://cloud.google.com/pubsub/docs/monitor-topic) of your Pub/Sub topic. Of course the topic does not have any consumers yet. Thus, you should find that messages are queuing up.
 
 By default you should see around .5 messages per second streaming into the topic.
+
+**Now you can stop the stream with "Ctrl+C" in the Cloud Shell.**
 
 
 
@@ -283,6 +282,8 @@ Clone the `data-journey` repo, if not already done so. Otherwise just `cd` into 
 
 ```bash
 git clone https://github.com/NucleusEngineering/data-journey.git
+```
+```bash
 cd data-journey/CDC
 ```
 
@@ -332,7 +333,7 @@ This repo has been tested on Terraform version `1.2.6` and the Google provider v
 
 ### Update Project ID in terraform.tfvars
 
-Rename the `terraform.tfvars.example` file to `terraform.tfvars` and update the default project ID in the file to match your project ID.
+In the `terraform.tfvars` file , update the default project ID to match your project ID.
 
 Check that the file has been saved with the updated project ID value.
 
@@ -381,7 +382,8 @@ Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
 ### Import a SQL file into MySQL
 
 Next, you will copy the `create_mysql.sql` file below into the Cloud Storage bucket you created above, make the file accessible to your Cloud SQL service account, and import the SQL command into your database.
-**Note:** The content of the SQL file is just here for informational purposes. Continue with the terminal commands below.
+
+**Note: The content of the SQL file is just here for informational purposes. Continue with the terminal commands below.**
 
 ```
 CREATE DATABASE IF NOT EXISTS database_datajourney;
@@ -441,6 +443,8 @@ View these tables in the BigQuery UI.
 ### Write Inserts and Updates
 
 Next, you will copy `update_mysql.sql` file below into the Cloud Storage bucket you created above, make the file accessible to your Cloud SQL service account, and import the SQL command into your database.
+
+**Note: The content of the SQL file is just here for informational purposes. Continue with the terminal commands below.**
 
 ```
 CREATE DATABASE IF NOT EXISTS database_datajourney;
@@ -534,15 +538,15 @@ Second, let's set up your Cloud Run Processing Service. `./ETL/CloudRun` contain
 
 Inspect the `Dockerfile` to understand how the container will be build.
 
-`main.py` defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic. 
+`main.py`  in the `data-journey/ETL/CloudRun` folder defines the web server that handles the incoming data points. Inspect `main.py` to understand the web server logic. 
 
 We can use Gemini Code Assist:
 
 1. Open Gemini Code Assist <img style="vertical-align:middle" src="https://www.gstatic.com/images/branding/productlogos/gemini/v4/web-24dp/logo_gemini_color_1x_web_24dp.png" width="8px" height="8px"> on the left hand side.
-2. Select the `main.py` file in the Explorer.
+2. Select the `main.py` file in the Explorer of the `data-journey/ETL/CloudRun` folder.
 3. Insert ``Please explain what the main.py file does?`` into the Gemini prompt.
 
-Make sure to replace the required PROJECT_ID in `config.py` so you can access them safely in `main.py`.
+Make sure to replace the required PROJECT_ID in `config.py` in the `./CloudRun` folder so you can access them safely in `main.py`.
 
 Open `~/data-journey/ETL/CloudRun/config.py` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/ETL/CloudRun/config.py">by clicking here</walkthrough-editor-open-file> and add your own variables.
 
