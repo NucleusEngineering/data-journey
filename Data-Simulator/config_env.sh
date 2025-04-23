@@ -15,7 +15,7 @@
 # limitations under the License.
 
 export GCP_PROJECT="<PROJECT-ID>"
-GCP_USER_EMAIL="<GCP-USER-EMAIL>"
+
 export ENDPOINT_URL="<ENDPOINT URL>" # doesn't need to be defined in the very beginning
 export GCP_REGION="europe-west1"
 export DATAFLOW_TEMPLATE=dataflow
@@ -26,5 +26,8 @@ export RUN_PROXY_DIR=cloud-run-pubsub-proxy
 export BUCKET=example-bucket-name-$GCP_PROJECT
 export FILE=extract
 
-username=$(echo "$GCP_USER_EMAIL" | cut -d'@' -f1)
-export GCP_USERNAME=$username
+
+#don't use - different use case backup
+# GCP_USER_EMAIL="<GCP-USER-EMAIL>"
+# username=$(echo "$GCP_USER_EMAIL" | cut -d'@' -f1)
+# export GCP_USERNAME=$username
