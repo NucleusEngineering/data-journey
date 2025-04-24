@@ -586,7 +586,7 @@ Only listing images in gcr.io/<project-id>. Use --repository to list images in o
 Next step is to deploy a new cloud run processing service based on the container you just build to your Container Registry.
 
 ```bash
-gcloud run deploy dj-run-service-data-processing --image gcr.io/$GCP_PROJECT/data-processing-service:latest --region=europe-west1 --allow-unauthenticated
+gcloud run deploy dj-run-service-data-processing --image eu.gcr.io/$GCP_PROJECT/data-processing-service:latest --region=europe-west1 --allow-unauthenticated
 ```
 
 ### ETL - Step 4
@@ -595,8 +595,12 @@ Define a Pub/Sub subscription named `dj-subscription_cloud_run` that can forward
 
 You will need to create a Push Subscription to the Pub/Sub topic we already defined.
 
-Enter the displayed URL of your processing in `./config_env.sh` as `PUSH_ENDPOINT` & reset the environment variables.
+Enter the displayed URL of your processing in `./config_env.sh` as `PUSH_ENDPOINT` & export that variable in the shell.
 Open `~/data-journey/Data-Simulator/config_env.sh` <walkthrough-editor-open-file filePath="/home/admin_/data-journey/Data-Simulator/config_env.sh">by clicking here</walkthrough-editor-open-file> and add your PUSH_ENDPOINT.
+
+```bash
+export PUSH_ENDPOINT="<your-push-endpoint-URL>"
+```
 
 Create PubSub push subscription:
 
