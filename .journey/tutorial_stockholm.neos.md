@@ -743,8 +743,8 @@ We will now set up our custom workflow.
 
 3. Make sure `defaultProject` value is ``{{ PROJECT_ID }}``
 
-4. add the line: (put notice that after `vars` there is a line-break, followed by indentation.)
-`vars: \
+4. add the lines: (put notice to add a line-break after `vars:`, keep the created indentation of the second line.)
+`vars:
     ml_models_dataset: <your-project-id>.outputs`
 
 5. Click on <walkthrough-spotlight-pointer locator="text('install packages')">INSTALL PACKAGES</walkthrough-spotlight-pointer> ***only once***. You should see a message at the bottom of the page:
@@ -779,7 +779,7 @@ Next, let's create several workflow files and directories:
   Copy the contents to each of those files: 
    
 
-    <walkthrough-editor-open-file filePath="ELT/definitions/outputs/churn_propensity.sqlx">`churn_propensity`</walkthrough-editor-open-file>
+  <walkthrough-editor-open-file filePath="ELT/definitions/outputs/churn_propensity.sqlx">`churn_propensity`</walkthrough-editor-open-file>
     
 5. Click on `sources` directory and create the following file:
       ```
@@ -844,22 +844,24 @@ Run the dataset creation by **Tag**. Tag allows you to just execute parts of the
 
 1. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('Tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="text('Multiple Tags')"> Multiple Tags </walkthrough-spotlight-pointer>
 
-2. Click on <walkthrough-spotlight-pointer locator="semantic({link 'Details'})">DETAILS</walkthrough-spotlight-pointer>
+2. After selecting the default srvice account and the necessary Tags, click `Start execution`
+
+3. Click on <walkthrough-spotlight-pointer locator="semantic({link 'Details'})">DETAILS</walkthrough-spotlight-pointer>
 
     Notice the Access Denied error on BigQuery for the dataform service account `{{ DATAFORM_SA }}`
 
-3. Go to [IAM & Admin](https://console.cloud.google.com/iam-admin)
+4. Go to [IAM & Admin](https://console.cloud.google.com/iam-admin)
 
-4. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Grant access'})">GRANT ACCESS</walkthrough-spotlight-pointer> and grant `BigQuery Data Editor , BigQuery Job User and BigQuery Connection User` to the principal (service account) `{{ DATAFORM_SA }}`.
+5. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Grant access'})">GRANT ACCESS</walkthrough-spotlight-pointer> and grant `BigQuery Data Editor , BigQuery Job User and BigQuery Connection User` to the principal (service account) `{{ DATAFORM_SA }}`.
 
-5. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Save'})">SAVE</walkthrough-spotlight-pointer>
+6. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Save'})">SAVE</walkthrough-spotlight-pointer>
 
   Note: If you encounter a policy update screen, just click on update.
 
-6. Go back to [Dataform](https://console.cloud.google.com/bigquery/dataform) within in BigQuery, and retry <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>. \
+7. Go back to [Dataform](https://console.cloud.google.com/bigquery/dataform) within in BigQuery, and retry <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>. \
 Notice the execution status. It should be a success.  
  
-7. Lastly, go to Compiled graph and explore it.
+8. Lastly, go to Compiled graph and explore it.
 Go to [Dataform](https://console.cloud.google.com/bigquery/dataform)\> <walkthrough-spotlight-pointer locator="text('datajourney-repository')">datajourney-repository</walkthrough-spotlight-pointer>>`datajourney-workspace` \> <walkthrough-spotlight-pointer locator="semantic({tab 'Compiled graph tab'})">COMPILED GRAPH</walkthrough-spotlight-pointer>
 
 ***
