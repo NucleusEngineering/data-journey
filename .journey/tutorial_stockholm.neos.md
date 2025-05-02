@@ -278,11 +278,8 @@ What you’ll do:
 
 ### Git clone repo
 
-Clone the `data-journey` repo, if not already done so. Otherwise just `cd` into the `CDC` folder.
+Clone the `https://github.com/NucleusEngineering/data-journey.git` repo, **if not already done so**. Otherwise just `cd` into the `CDC` folder.
 
-```bash
-git clone https://github.com/NucleusEngineering/data-journey.git
-```
 ```bash
 cd data-journey/CDC
 ```
@@ -746,8 +743,8 @@ We will now set up our custom workflow.
 
 3. Make sure `defaultProject` value is ``{{ PROJECT_ID }}``
 
-4. add the line: 
-`vars:
+4. add the line: (put notice that after `vars` there is a line-break, followed by indentation.)
+`vars: \
     ml_models_dataset: <your-project-id>.outputs`
 
 5. Click on <walkthrough-spotlight-pointer locator="text('install packages')">INSTALL PACKAGES</walkthrough-spotlight-pointer> ***only once***. You should see a message at the bottom of the page:
@@ -845,7 +842,7 @@ Notice the usage of `$ref` in line 12, of `ELT/definitions/ml_models/logistic_re
 
 Run the dataset creation by **Tag**. Tag allows you to just execute parts of the workflow and not the entire workflow. 
 
-1. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})"> Start execution</walkthrough-spotlight-pointer>
+1. Click on <walkthrough-spotlight-pointer locator="semantic({button 'Start execution'})">Start execution</walkthrough-spotlight-pointer> > <walkthrough-spotlight-pointer locator="text('Tags')">Tags</walkthrough-spotlight-pointer> \> <walkthrough-spotlight-pointer locator="text('Multiple Tags')"> Multiple Tags </walkthrough-spotlight-pointer>
 
 2. Click on <walkthrough-spotlight-pointer locator="semantic({link 'Details'})">DETAILS</walkthrough-spotlight-pointer>
 
