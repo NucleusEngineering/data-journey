@@ -631,7 +631,7 @@ to direct an artificial click stream at your pipeline. No need to reinitialize i
 After a minute or two you should find your BigQuery destination table populated with data points. The metrics of Pub/Sub topic and Subscription should also show the throughput. Take a specific look at the un-acknowledged message metrics in Pub/Sub. If everything works as expected it should be 0.
 
 
-## Lab 3: ELT (Extract Load Transform) - Dataform
+## Lab 4: ELT (Extract Load Transform) - Dataform
 
 <walkthrough-tutorial-duration duration="30"></walkthrough-tutorial-duration>
 <walkthrough-tutorial-difficulty difficulty="3"></walkthrough-tutorial-difficulty>
@@ -691,7 +691,6 @@ First let's make sure we have the Project number in a var:
 
 <walkthrough-info-message>**Important:** Project number is NOT the project ID that we saved before. Therefore DO NOT skip this step. </walkthrough-info-message>
 ```bash
-gcloud auth activate-service-account [PROVIDED_USER]
 gcloud auth login
 ```
 ```bash
@@ -867,7 +866,7 @@ Go to [Dataform](https://console.cloud.google.com/bigquery/dataform)\> <walkthro
 ***
 
 
-## Lab 4. Machine Learning Datathon
+## Lab 5. Machine Learning Datathon
 
 <walkthrough-tutorial-duration duration="70"></walkthrough-tutorial-duration>
 <walkthrough-tutorial-difficulty difficulty="2"></walkthrough-tutorial-difficulty>
