@@ -82,7 +82,7 @@ This part of the repository focuses on a multi-agent system specifically designe
     *   You will find the datasets inside 'data-science-agent/utils/data/'.
         Make sure you are still in the working directory (`data-journey/data-science-agent`). To load the test and train tables into BigQuery, run the following commands:
         ```bash
-        python3 data_science/utils/create_bq_table.py
+        python3 data-science/utils/create_bq_table.py
         ```
 
 
@@ -93,10 +93,10 @@ This part of the repository focuses on a multi-agent system specifically designe
     Leave the corpus name empty in the .env file: `BQML_RAG_CORPUS_NAME = ''`. The corpus name will be added automatically once it's created.
 
     To set up the RAG Corpus for your project, run the methods `create_RAG_corpus()` and `ingest_files()` in
-    `data-science/data_science/utils/reference_guide_RAG.py` by running the below command from the working directory:
+    `data-science/data-science/utils/reference_guide_RAG.py` by running the below command from the working directory:
 
     ```bash
-    python3 data_science/utils/reference_guide_RAG.py
+    python3 data-science/utils/reference_guide_RAG.py
     ```
 
 
