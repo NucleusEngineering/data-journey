@@ -84,7 +84,7 @@ This part of the repository focuses on a multi-agent system specifically designe
         ```bash
         python3 data-science/utils/create_bq_table.py
         ```
-
+        If you get dotenv error, try pip install python-dotenv.
 
 7.  **BQML Setup:**
     The BQML Agent uses the Vertex AI RAG Engine to query the full BigQuery ML Reference Guide.
