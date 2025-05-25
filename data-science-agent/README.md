@@ -69,8 +69,6 @@ This part of the repository focuses on a multi-agent system specifically designe
     Rename the file ".env-example" to ".env" and fill the below values:
 
     ```bash
-    #  Vertex backend config
-    
     GOOGLE_GENAI_USE_VERTEXAI=1
     GOOGLE_CLOUD_PROJECT='YOUR_VALUE_HERE'
     GOOGLE_CLOUD_LOCATION='YOUR_VALUE_HERE'
