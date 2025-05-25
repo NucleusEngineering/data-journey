@@ -43,7 +43,7 @@ This part of the repository focuses on a multi-agent system specifically designe
     poetry install
     ```
 
-    This command reads the `pyproject.toml` file and installs all the necessary dependencies into a virtual environment managed by Poetry.
+    This command reads the `pyproject.toml` file and installs all the necessary dependencies into a virtual environment managed by Poetry. If it doesn't work try pip poetry install and restart your shell session.
 
 3.  **Activate the Poetry Shell:**
 
