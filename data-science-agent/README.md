@@ -123,15 +123,15 @@ from the working directory:
 1.  Run agent in CLI:
 
     ```bash
-    poetry run adk run data_science
+    poetry run adk run data-science
     ```
 
 2.  Run agent with ADK Web UI:
     ```bash
     poetry run adk web
     ```
-    Select the data_science from the dropdown
-
+    Select the data-science from the dropdown
+    ** If you get some errors, try installing poetry again.
 
 ### Example Agent Interaction
 
