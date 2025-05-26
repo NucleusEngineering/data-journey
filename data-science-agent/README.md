@@ -25,7 +25,7 @@ This part of the repository focuses on a multi-agent system specifically designe
 
 *   **Google Cloud Account:** You need a Google Cloud account with BigQuery enabled.
 *   **Python 3.12+:** Ensure you have Python 3.12 or a later version installed.
-*   **Poetry:** Install Poetry by following the instructions below.
+*   **Poetry:** Install Poetry by following on the official Poetry website: https://python-poetry.org/docs/.
 
 
 ### Project Setup:
