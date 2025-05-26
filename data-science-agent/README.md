@@ -126,7 +126,7 @@ from the working directory:
 1.  Run agent in CLI:
 
     ```bash
-    poetry run adk run data-science
+    poetry run adk run data_science
     ```
 
 2.  Run agent with ADK Web UI:
