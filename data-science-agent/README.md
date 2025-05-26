@@ -16,7 +16,6 @@ This part of the repository focuses on a multi-agent system specifically designe
 *   **Machine Learning (BQML):** Features a BQML Agent that leverages BigQuery ML for training and evaluating machine learning models.
 *   **Code Interpreter Integration:** Supports the use of a Code Interpreter extension in Vertex AI for executing Python code, enabling complex data analysis and manipulation.
 *   **ADK Web GUI:** Offers a user-friendly GUI interface for interacting with the agents.
-*   **Testability:** Includes a comprehensive test suite for ensuring the reliability of the agents.
 
 
 ## Setup and Installation
