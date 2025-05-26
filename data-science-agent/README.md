@@ -78,7 +78,7 @@ This part of the repository focuses on a multi-agent system specifically designe
     ```
 7.  **BigQuery Setup:**
  
-    *   First, set the BigQuery project ID (same as your project id)  and `BQ_DATASET_ID` in the `.env` file. 
+    *   First, set the BigQuery project ID `BQ_PROJECT_ID` (same as your project id)  and `BQ_DATASET_ID` in the `.env` file. 
     *   You will find the datasets inside 'data-science-agent/utils/data/'.
         Make sure you are still in the working directory (`data-journey/data-science-agent`). To load the test and train tables into BigQuery, run the following commands:
         ```bash
@@ -92,6 +92,10 @@ This part of the repository focuses on a multi-agent system specifically designe
     Before running the setup, ensure your project ID is added in .env file: `"GOOGLE_CLOUD_PROJECT"`.
     Leave the corpus name empty in the .env file: `BQML_RAG_CORPUS_NAME = ''`. The corpus name will be added automatically once it's created.
 
+    The .env file should look like this (end of file, we just added):
+    <img width="748" alt="image" src="https://github.com/user-attachments/assets/c71d8203-3eb2-4624-8411-e5500938260d" />
+
+
     To set up the RAG Corpus for your project, run the methods `create_RAG_corpus()` and `ingest_files()` in
     `data-science/data_science/utils/reference_guide_RAG.py` by running the below command from the working directory:
 
@@ -100,7 +104,7 @@ This part of the repository focuses on a multi-agent system specifically designe
     ```
 
 
-9.  **(optional step) Other Environment Variables:**
+10.  **(optional step) Other Environment Variables:**
 
     *   `NL2SQL_METHOD`: (Optional) Either `BASELINE` or `CHASE`. Sets the method for SQL Generation. Baseline uses Gemini off-the-shelf, whereas CHASE uses [CHASE-SQL](https://arxiv.org/abs/2410.01943)
     *   `CODE_INTERPRETER_EXTENSION_NAME`: (Optional) The full resource name of
