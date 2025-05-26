@@ -73,8 +73,11 @@ This part of the repository focuses on a multi-agent system specifically designe
     GOOGLE_CLOUD_PROJECT='YOUR_VALUE_HERE'
     GOOGLE_CLOUD_LOCATION='YOUR_VALUE_HERE'
     ```
-
-6.  **BigQuery Setup:**
+    Make sure to source the variables as below:
+     ```bash
+    source .env
+    ```
+7.  **BigQuery Setup:**
  
     *   First, set the BigQuery project ID (same as your project id)  and `BQ_DATASET_ID` in the `.env` file. 
     *   You will find the datasets inside 'data-science-agent/utils/data/'.
@@ -84,7 +87,7 @@ This part of the repository focuses on a multi-agent system specifically designe
         ```
         If you get dotenv error, try pip install python-dotenv.
 
-7.  **BQML Setup:**
+8.  **BQML Setup:**
     The BQML Agent uses the Vertex AI RAG Engine to query the full BigQuery ML Reference Guide.
 
     Before running the setup, ensure your project ID is added in .env file: `"GOOGLE_CLOUD_PROJECT"`.
@@ -98,7 +101,7 @@ This part of the repository focuses on a multi-agent system specifically designe
     ```
 
 
-8.  **(optional step) Other Environment Variables:**
+9.  **(optional step) Other Environment Variables:**
 
     *   `NL2SQL_METHOD`: (Optional) Either `BASELINE` or `CHASE`. Sets the method for SQL Generation. Baseline uses Gemini off-the-shelf, whereas CHASE uses [CHASE-SQL](https://arxiv.org/abs/2410.01943)
     *   `CODE_INTERPRETER_EXTENSION_NAME`: (Optional) The full resource name of
