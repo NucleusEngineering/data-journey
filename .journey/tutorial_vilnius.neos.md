@@ -910,10 +910,12 @@ We created 5 Labs (Notebooks) to guide you through this journey.
 
 * Experience GenAI features within BigQuery
 
+### *NEW* Lab 6. Veo - Media generation lab [Optional]
+
+### *NEW* Lab 7. Data Science Agent with ADK [Optional]
+
 You can access all of our labs on our [Github](https://github.com/NucleusEngineering/data-journey/tree/main/ML). After downloading the different lab files you can upload and run them in for example our **VertexAI Colab Enterprise** Notebook environment.
 
 **Have fun!**
 
-## Lab 6. Veo - Media generation lab [Optional]
 
-## Lab 7. Data Science Agent with ADK [Optional]
