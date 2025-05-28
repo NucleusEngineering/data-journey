@@ -92,10 +92,6 @@ This part of the repository focuses on a multi-agent system specifically designe
     Before running the setup, ensure your project ID is added in .env file: `"GOOGLE_CLOUD_PROJECT"`.
     Leave the corpus name empty in the .env file: `BQML_RAG_CORPUS_NAME = ''`. The corpus name will be added automatically once it's created.
 
-    The .env file should look like this (end of file, we just added):
-    <img width="748" alt="image" src="https://github.com/user-attachments/assets/c71d8203-3eb2-4624-8411-e5500938260d" />
-
-
     To set up the RAG Corpus for your project, run the methods `create_RAG_corpus()` and `ingest_files()` in
     `data-science/data_science/utils/reference_guide_RAG.py` by running the below command from the working directory:
 
