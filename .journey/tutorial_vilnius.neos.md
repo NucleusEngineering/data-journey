@@ -281,7 +281,7 @@ What you’ll do:
 Clone the `https://github.com/NucleusEngineering/data-journey.git` repo, **if not already done so**. Otherwise just `cd` into the `CDC` folder.
 
 ```bash
-cd data-journey/CDC
+cd ~/data-journey/CDC
 ```
 
 ### Set up cloud environment
