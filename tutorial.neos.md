@@ -436,7 +436,7 @@ gcloud builds submit --tag gcr.io/$GCP_PROJECT/beam-processing-flex-template
 Create a new bucket by running:
 
 ```bash
-gsutil mb -c standard -l europe-west1 gs://$GCP_PROJECT-gaming-events
+gcloud storage buckets create gs://$GCP_PROJECT-gaming-events --default-storage-class=standard --location=europe-west1
 ```
 
 Build the flex-template into your bucket using:
@@ -626,8 +626,8 @@ INSERT INTO database_datajourney.example_table (event_timestamp, event_name, use
 ```bash
 SERVICE_ACCOUNT=$(gcloud sql instances describe mysql | grep serviceAccountEmailAddress | awk '{print $2;}')
 
-gsutil cp create_mysql.sql gs://${project_id}/resources/create_mysql.sql
-gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${project_id}
+gcloud storage cp create_mysql.sql gs://${project_id}/resources/create_mysql.sql
+gcloud storage buckets add-iam-policy-binding gs://${project_id} --member=serviceAccount:${SERVICE_ACCOUNT} --role=roles/storage.objectViewer
 
 gcloud sql import sql mysql gs://${project_id}/resources/create_mysql.sql --quiet
 ```
@@ -678,8 +678,8 @@ INSERT INTO database_datajourney.example_table (event_timestamp, event_name, use
 SQL_FILE=update_mysql.sql
 SERVICE_ACCOUNT=$(gcloud sql  describe mysql | grep serviceAccountEmailAddress | awk '{print $2;}')
 
-gsutil cp ${SQL_FILE} gs://${project_id}/resources/${SQL_FILE}
-gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${project_id}
+gcloud storage cp ${SQL_FILE} gs://${project_id}/resources/${SQL_FILE}
+gcloud storage buckets add-iam-policy-binding gs://${project_id} --member=serviceAccount:${SERVICE_ACCOUNT} --role=roles/storage.objectViewer
 
 gcloud sql import sql mysql gs://${project_id}/resources/${SQL_FILE} --quiet
 ```

@@ -404,10 +404,10 @@ SERVICE_ACCOUNT=$(gcloud sql instances describe mysql | grep serviceAccountEmail
 
 ```bash
 
-gsutil cp create_mysql.sql gs://${GCP_PROJECT}/resources/create_mysql.sql
+gcloud storage cp create_mysql.sql gs://${GCP_PROJECT}/resources/create_mysql.sql
 ```
 ```bash
-gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${GCP_PROJECT}
+gcloud storage buckets add-iam-policy-binding gs://${GCP_PROJECT} --member=serviceAccount:${SERVICE_ACCOUNT} --role=roles/storage.objectViewer
 ```
 ```bash
 
@@ -470,11 +470,11 @@ SERVICE_ACCOUNT=$(gcloud sql instances describe mysql | grep serviceAccountEmail
 
 ```bash
 
-gsutil cp ${SQL_FILE} gs://${GCP_PROJECT}/resources/${SQL_FILE}
+gcloud storage cp ${SQL_FILE} gs://${GCP_PROJECT}/resources/${SQL_FILE}
 ```
 
 ```bash
-gsutil iam ch serviceAccount:${SERVICE_ACCOUNT}:objectViewer gs://${GCP_PROJECT}
+gcloud storage buckets add-iam-policy-binding gs://${GCP_PROJECT} --member=serviceAccount:${SERVICE_ACCOUNT} --role=roles/storage.objectViewer
 ```
 
 ```bash 
