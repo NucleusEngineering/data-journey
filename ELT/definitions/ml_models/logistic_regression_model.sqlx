@@ -1,0 +1,12 @@
+config {
+  type: "operations",
+  schema: "outputs"
+}
+
+CREATE MODEL  `${dataform.projectConfig.vars.ml_models_dataset}.dataform_logistic_regression_baseline`
+OPTIONS
+  (MODEL_TYPE='LOGISTIC_REG',
+  input_label_cols=["churned"]) 
+AS
+SELECT * EXCEPT (user_pseudo_id)
+FROM ${ref("churn_propensity")}

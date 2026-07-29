@@ -1,0 +1,7 @@
+config {
+  type: "declaration",
+  database: "firebase-public-project",
+  schema: "analytics_153293282",
+  name: "events_*",
+  description: "raw events"
+}

@@ -1,0 +1,39 @@
+config {
+  type: "table",
+  schema: "outputs",
+  tags: ["audience"],
+  description: "Combining aggregate, demogrpahic and returning info into one table for churned users",
+   assertions: {                                 // https://docs.dataform.co/reference#ITableAssertions
+    nonNull: ["cnt_user_engagement", "churned"], // select from dropdown to run assertion only. If no values are retured assertion check was successful
+    /*rowConditions: [
+      'country not like "%Germany"'              // mocking assertion to return values for all records belonging to Germany
+    ]*/
+   }
+}
+
+SELECT
+    dem.*,
+    IFNULL(beh.cnt_user_engagement, 0) AS cnt_user_engagement,
+    IFNULL(beh.cnt_level_start_quickplay, 0) AS cnt_level_start_quickplay,
+    IFNULL(beh.cnt_level_end_quickplay, 0) AS cnt_level_end_quickplay,
+    IFNULL(beh.cnt_level_complete_quickplay, 0) AS cnt_level_complete_quickplay,
+    IFNULL(beh.cnt_level_reset_quickplay, 0) AS cnt_level_reset_quickplay,
+    IFNULL(beh.cnt_post_score, 0) AS cnt_post_score,
+    IFNULL(beh.cnt_spend_virtual_currency, 0) AS cnt_spend_virtual_currency,
+    IFNULL(beh.cnt_ad_reward, 0) AS cnt_ad_reward,
+    IFNULL(beh.cnt_challenge_a_friend, 0) AS cnt_challenge_a_friend,
+    IFNULL(beh.cnt_completed_5_levels, 0) AS cnt_completed_5_levels,
+    IFNULL(beh.cnt_use_extra_steps, 0) AS cnt_use_extra_steps,
+    ret.user_first_engagement,
+    ret.churned
+  FROM
+    ${ref("user_returninginfo")} ret
+  LEFT OUTER JOIN
+    ${ref("user_demographics")} dem
+  ON 
+    ret.user_pseudo_id = dem.user_pseudo_id
+  LEFT OUTER JOIN 
+    ${ref("user_aggregate_behaviour")} beh
+  ON
+    ret.user_pseudo_id = beh.user_pseudo_id
+  WHERE ret.bounced = 0

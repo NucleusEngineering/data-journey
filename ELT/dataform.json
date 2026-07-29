@@ -1,0 +1,10 @@
+{
+  "defaultSchema": "dataform",
+  "assertionSchema": "dataform_assertions",
+  "warehouse": "bigquery",
+  "defaultDatabase": "<your-project-id>",
+  "defaultLocation": "US",
+  "vars": {
+  "ml_models_dataset": "`<your-project-id>.outputs`"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "customer-churn",
+  "dependencies": {
+    "@dataform/core": "2.0.1"
+  }
+}

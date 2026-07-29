@@ -1,0 +1,38 @@
+config {
+  type: "view",
+  schema: "churn_model_staging",
+  description: "processing user aggregate behaviour",
+  tags: ["audience"],
+  dependencies: [ "user_returninginfo"] 
+}
+
+WITH events_first24hr AS (
+    -- select user data only from first 24 hr of using the app
+    SELECT
+      e.*
+    FROM
+      ${ref("events_*")} e
+    JOIN
+      ${ref("user_returninginfo")} r 
+    ON
+      e.user_pseudo_id = r.user_pseudo_id
+    WHERE
+      e.event_timestamp <= r.ts_24hr_after_first_engagement
+    )
+SELECT
+  user_pseudo_id,
+  SUM(IF(event_name = 'user_engagement', 1, 0)) AS cnt_user_engagement,
+  SUM(IF(event_name = 'level_start_quickplay', 1, 0)) AS cnt_level_start_quickplay,
+  SUM(IF(event_name = 'level_end_quickplay', 1, 0)) AS cnt_level_end_quickplay,
+  SUM(IF(event_name = 'level_complete_quickplay', 1, 0)) AS cnt_level_complete_quickplay,
+  SUM(IF(event_name = 'level_reset_quickplay', 1, 0)) AS cnt_level_reset_quickplay,
+  SUM(IF(event_name = 'post_score', 1, 0)) AS cnt_post_score,
+  SUM(IF(event_name = 'spend_virtual_currency', 1, 0)) AS cnt_spend_virtual_currency,
+  SUM(IF(event_name = 'ad_reward', 1, 0)) AS cnt_ad_reward,
+  SUM(IF(event_name = 'challenge_a_friend', 1, 0)) AS cnt_challenge_a_friend,
+  SUM(IF(event_name = 'completed_5_levels', 1, 0)) AS cnt_completed_5_levels,
+  SUM(IF(event_name = 'use_extra_steps', 1, 0)) AS cnt_use_extra_steps,
+FROM
+  events_first24hr
+GROUP BY
+  1
